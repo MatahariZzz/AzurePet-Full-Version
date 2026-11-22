@@ -19,6 +19,7 @@
       AzurePet-Linux-x64.deb        (Linux 64-bit, Debian/Ubuntu)
       AzurePet-Linux-arm64.deb      (Linux ARM64, Debian/Ubuntu)
       AzurePet-Linux-Arch-x64.pkg.tar.zst  (Arch Linux, Manjaro, EndeavourOS)
+      AzurePet-Linux-x64.AppImage    (universal: Arch, Fedora, openSUSE, distro apa pun)
   Halaman ini mandiri: tidak butuh internet, CDN, atau file lain.
   ============================================================
 -->
@@ -133,6 +134,10 @@
   .arch .btn{width:100%; justify-content:flex-start; padding:11px 14px; font-size:14px; border-radius:12px}
   .arch .big{display:block; font-weight:700}
   .arch .sub{display:block; font-size:11.5px; font-weight:500; color:var(--muted); margin-top:1px}
+  .grp{display:flex; align-items:center; gap:8px; margin:16px 0 8px; font-size:11px; font-weight:800;
+    letter-spacing:.09em; text-transform:uppercase; color:var(--muted)}
+  .grp:first-of-type{margin-top:14px}
+  .grp::after{content:""; flex:1; height:1px; background:var(--line)}
   .btn-primary .sub{color:rgba(255,255,255,.85)}
   .note{display:flex; gap:10px; align-items:flex-start; margin-top:22px; padding:14px 16px; border-radius:14px;
     background:#fff; border:1px dashed var(--line); color:#7c4a5e; font-size:13.5px}
@@ -305,7 +310,9 @@
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-1.9 0-3.1 1.6-3.1 3.7 0 1.5.3 2.3-.3 3.2-.7 1-1.9 2-2.4 3.6-.3 1-.1 1.8-.5 2.6-.4.9-.9 1.6-.6 2.3.2.5.9.8 1.6 1 .7.2 1.2.4 1.6 1 .3.5.9.6 1.7.6h3.9c.8 0 1.4-.1 1.7-.6.4-.6.9-.8 1.6-1 .7-.2 1.4-.5 1.6-1 .3-.7-.2-1.4-.6-2.3-.4-.8-.2-1.6-.5-2.6-.5-1.6-1.7-2.6-2.4-3.6-.6-.9-.3-1.7-.3-3.2C15.1 3.6 13.9 2 12 2zm-1.5 3.6c.4 0 .7.4.7 1s-.3 1-.7 1-.7-.4-.7-1 .3-1 .7-1zm3 0c.4 0 .7.4.7 1s-.3 1-.7 1-.7-.4-.7-1 .3-1 .7-1zM12 8.3l1.4 1.6-1.4.8-1.4-.8L12 8.3zm-2.7 5.4c.5 0 1 .3 1 1 0 .5-.4.8-1 .8s-1-.3-1-.8c0-.7.5-1 1-1zm5.4 0c.5 0 1 .3 1 1 0 .5-.4.8-1 .8s-1-.3-1-.8c0-.7.5-1 1-1z"/></svg>
             Linux
           </h3>
-          <p class="req">64-bit · Debian/Ubuntu (.deb) &amp; Arch/Manjaro (.pkg.tar.zst)</p>
+          <p class="req">64-bit · pilih sesuai distro &amp; cara pemasangan</p>
+
+          <div class="grp">Debian / Ubuntu</div>
           <div class="arch">
             <a class="btn btn-primary dl" data-asset="AzurePet-Linux-x64.deb" href="#">
               <span><span class="big">x64</span><span class="sub">Intel / AMD 64-bit · .deb</span></span>
@@ -316,10 +323,18 @@
               <span><span class="big">ARM64</span><span class="sub">Raspberry Pi 4/5, Snapdragon · .deb</span></span>
             </a>
           </div>
+
+          <div class="grp">Arch Linux / Manjaro / EndeavourOS</div>
           <div class="arch">
             <a class="btn dl" data-asset="AzurePet-Linux-Arch-x64.pkg.tar.zst" href="#"
                style="background:linear-gradient(180deg,#fff0f5,#ffe1ec); border-color:var(--pink-300); color:var(--pink-600)">
-              <span><span class="big">Arch Linux</span><span class="sub">Arch, Manjaro, EndeavourOS · .pkg.tar.zst</span></span>
+              <span><span class="big">Paket resmi Arch</span><span class="sub">dipasang ke sistem · .pkg.tar.zst</span></span>
+            </a>
+          </div>
+          <div class="arch">
+            <a class="btn dl" data-asset="AzurePet-Linux-x64.AppImage" href="#"
+               style="background:linear-gradient(180deg,#fff6fb,#ffe9f3); border-color:var(--pink-200); color:var(--pink-600)">
+              <span><span class="big">AppImage</span><span class="sub">tanpa pasang, klik dua kali · juga untuk Fedora/openSUSE</span></span>
             </a>
           </div>
         </article>
@@ -420,9 +435,26 @@
           <li>Cari <b>AzurePet</b> di menu aplikasi.</li>
           <li>Butuh compositor aktif (GNOME, KDE, Cinnamon, dan Mint sudah aktif sejak awal) supaya latar karakter transparan.</li>
         </ol>
-        <p style="color:#7c4a5e;font-size:14px;margin:16px 0 0"><b>Arch Linux, Manjaro, EndeavourOS:</b> unduh file <code>.pkg.tar.zst</code>, lalu pasang lewat terminal:</p>
-        <p style="margin:10px 0 0"><code>sudo pacman -U AzurePet-Linux-Arch-x64.pkg.tar.zst</code></p>
-        <p style="color:#7c4a5e;font-size:14px;margin:12px 0 0">Bisa juga dibuka lewat aplikasi <b>Tambahkan/Instal Paket Lokal</b> (Pamac) dengan klik dua kali file-nya. Distro berbasis <b>Fedora / openSUSE</b> memakai format <code>.rpm</code> yang belum tersedia — beri tahu kalau butuh.</p>
+        <p style="color:#7c4a5e;font-size:14px;margin:20px 0 0"><b>Arch Linux, Manjaro, EndeavourOS</b> — ada dua pilihan, pakai salah satu:</p>
+
+        <p style="margin:14px 0 0;font-weight:650;font-size:14.5px">1 · Paket resmi Arch (<code>.pkg.tar.zst</code>)</p>
+        <ol style="margin-top:6px">
+          <li>Unduh <code>AzurePet-Linux-Arch-x64.pkg.tar.zst</code>.</li>
+          <li>Pasang lewat terminal: <code>sudo pacman -U AzurePet-Linux-Arch-x64.pkg.tar.zst</code></li>
+          <li>Atau klik dua kali file-nya lewat <b>Pamac</b> (“Tambahkan/Instal Paket Lokal”).</li>
+          <li>Setelah itu <b>AzurePet</b> muncul di menu aplikasi dan bisa dihapus lewat pacman/Pamac.</li>
+        </ol>
+
+        <p style="margin:18px 0 0;font-weight:650;font-size:14.5px">2 · AppImage (tanpa memasang apa pun)</p>
+        <ol style="margin-top:6px">
+          <li>Unduh <code>AzurePet-Linux-x64.AppImage</code>.</li>
+          <li>Klik kanan → <b>Properties</b> → tab <b>Permissions</b> → centang <b>Allow executing file as program</b>.</li>
+          <li>Klik dua kali → AzurePet langsung jalan. Tidak ada yang masuk ke sistem, tidak butuh sudo.</li>
+          <li>Kalau muncul pesan soal FUSE: <code>./AzurePet-Linux-x64.AppImage --appimage-extract-and-run</code></li>
+          <li>Ingin ikonnya masuk menu aplikasi? Pasang <b>AppImageLauncher</b>, lalu buka AppImage-nya sekali.</li>
+        </ol>
+
+        <p style="color:#7c4a5e;font-size:14px;margin:18px 0 0"><b>Distro lain (Fedora, openSUSE, Void, …)</b> — pakai AppImage di atas; file yang sama jalan di distro apa pun.</p>
       </div>
 
       <div class="sec-head" style="margin-top:44px">
@@ -471,7 +503,7 @@
       </details>
       <details>
         <summary>Cara menghapus aplikasinya?</summary>
-        <p>Windows: Settings → Apps → Installed apps → AzurePet → Uninstall. macOS: seret AzurePet dari folder Applications ke Trash. Linux Debian: <code>sudo dpkg -r azurepet</code> atau lewat Software Center. Linux Arch: <code>sudo pacman -Rns azurepet</code>. File <code>.glb</code> milikmu tidak ikut terhapus.</p>
+        <p>Windows: Settings → Apps → Installed apps → AzurePet → Uninstall. macOS: seret AzurePet dari folder Applications ke Trash. Linux Debian: <code>sudo dpkg -r azurepet</code> atau lewat Software Center. Linux Arch: <code>sudo pacman -Rns azurepet</code>. AppImage: cukup hapus file <code>.AppImage</code>-nya (tidak ada yang tertinggal di sistem). File <code>.glb</code> milikmu tidak ikut terhapus.</p>
       </details>
     </div>
   </section>
@@ -582,5 +614,5 @@
   document.getElementById("burger").addEventListener("click", () => nav.classList.toggle("open"));
   document.querySelectorAll(".nav-links a").forEach(a => a.addEventListener("click", () => nav.classList.remove("open")));
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5e8b3c4aa165844',t:'MTc5NTM1ODU2Mg=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5e8b3c4aa165844',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
