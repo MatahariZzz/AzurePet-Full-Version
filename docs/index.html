@@ -200,7 +200,12 @@
     .nav.open .nav-cta{display:flex; position:absolute; top:calc(64px + 168px); left:20px; right:20px}
   }
   @media (prefers-reduced-motion:reduce){ .pet{animation:none} html{scroll-behavior:auto} }
+
   /* ---------- komentar ---------- */
+  /* PENTING: atribut hidden harus selalu menang atas display:flex/inline-flex,
+     kalau tidak, chip OWNER & bar balasan ikut tampil untuk pengunjung anonim. */
+  [hidden]{display:none !important}
+
   .cm-sub{text-align:center; color:var(--muted); font-size:14.5px; margin:-20px auto 0; max-width:54ch}
   .cm-card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; margin-top:26px}
   .cm-form{display:flex; flex-direction:column; gap:10px; padding-bottom:16px; border-bottom:1px dashed var(--line)}
@@ -296,6 +301,16 @@
   .cm-btn-sm.simpan{background:linear-gradient(180deg,var(--pink-400),var(--pink-500)); color:#fff; border-color:transparent}
   .cm-btn-sm.simpan:hover{background:linear-gradient(180deg,var(--pink-300),var(--pink-400))}
 
+  /* ---------- baris status (anonim / owner) ---------- */
+  .cm-status{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted);
+    background:#fff; border:1px dashed var(--line); border-radius:10px; padding:7px 12px}
+  .cm-status b{color:var(--pink-600); font-weight:700}
+  .cm-status .titik{width:8px; height:8px; border-radius:50%; background:var(--pink-400);
+    box-shadow:0 0 0 3px rgba(244,143,177,.18); flex:0 0 auto}
+  .cm-status.own{border-style:solid; border-color:rgba(47,124,246,.32); color:#2f7cf6; background:rgba(47,124,246,.06)}
+  .cm-status.own b{color:#2f7cf6}
+  .cm-status.own .titik{background:#2f7cf6; box-shadow:0 0 0 3px rgba(47,124,246,.16)}
+
 </style>
 </head>
 <body>
@@ -321,7 +336,6 @@
   function gagal(m){ return Promise.resolve({ok:false,status:400,text:function(){return Promise.resolve(JSON.stringify({message:m}))}}); }
   window.fetch=function(url,opt){
     var q=opt&&opt.body?JSON.parse(opt.body):{};
-    var b=null;
     if(url.indexOf('rpc/kirim_komentar')>-1){
       var own=(q.p_token==='owner-demo');
       var row={id:next++,dibuat:new Date().toISOString(),nama:q.p_nama,isi:q.p_isi,owner:own,diedit:false,
@@ -329,10 +343,13 @@
       DB.unshift(row); var pub=kePublic(row); pub.kunci=row.kunci; return ok(pub);
     }
     if(url.indexOf('rpc/ubah_komentar')>-1){
-      if(!boleh(q)) return gagal('Kamu hanya bisa mengubah komentarmu sendiri.');
       var c=DB.find(function(x){return x.id===q.p_id;});
       if(!c) return gagal('Komentar sudah tidak ada.');
-      if(c.owner && q.p_token!=='owner-demo') return gagal('Komentar pemilik situs tidak bisa diubah.');
+      if(c.owner){
+        if(q.p_token!=='owner-demo') return gagal('Komentar pemilik situs tidak bisa diubah.');
+      } else if(!(q.p_kunci && c.kunci===q.p_kunci)){
+        return gagal('Kamu hanya bisa mengubah komentarmu sendiri.');
+      }
       c.isi=q.p_isi; c.diedit=true; return ok(kePublic(c));
     }
     if(url.indexOf('rpc/hapus_komentar')>-1){
@@ -352,7 +369,6 @@
   window.confirm=function(){return true;};
   try{
     localStorage.setItem('azurepet_nama','kamu');
-    /* dua komentar contoh dianggap milik pengunjung pratinjau ini */
     localStorage.setItem('azurepet_kunci_komentar', JSON.stringify({"7":"kunci-rizky","4":"kunci-budi"}));
   }catch(e){}
 })();
@@ -684,6 +700,10 @@
           <div class="cm-row">
             <span class="cm-count" id="cmCount">0/600</span>
           </div>
+          <div class="cm-status" id="cmStatus">
+            <span class="titik"></span>
+            <span id="cmStatusText">Anonim — komentar darimu tampil sebagai <b id="cmStatusName">username</b></span>
+          </div>
           <div class="cm-bot">
             <label class="cm-remember"><input type="checkbox" id="cmRemember" checked> Ingat username saya</label>
             <span id="cmOwnerChip" class="badge-own" hidden>
@@ -837,7 +857,7 @@
     const SB_KEY  = "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";   /* contoh: "eyJhbGciOiJIUzI1NiIsInR5cCI6..." */
 
     const LS_NAME  = "azurepet_nama";
-    const LS_TOKEN = "azurepet_kunci_owner";
+    const LS_TOKEN = "azurepet_kunci_owner";   /* diingat di browser ini sampai "Keluar" */
     const LS_TIME  = "azurepet_komentar_terakhir";
     const LS_MINE  = "azurepet_kunci_komentar";     /* { id: kunci } milik orang ini */
     const COOLDOWN = 15000;
@@ -849,6 +869,7 @@
     const elRem = $("cmRemember"), elHp = $("cmHp"), elStat = $("cmStat");
     const elOwnBox = $("cmOwnBox"), elToken = $("cmToken"), elOwnChip = $("cmOwnerChip");
     const elRepBar = $("cmRepBar"), elRepTo = $("cmRepTo");
+    const elStatus = $("cmStatus"), elStatusText = $("cmStatusText");
     if (!elCard) return;
 
     const aktif = /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SB_URL.replace(/\/+$/, "")) && SB_KEY.length > 40;
@@ -858,6 +879,9 @@
       try { return JSON.parse(localStorage.getItem(kunci) || "null") || cadangan; } catch (e) { return cadangan; }
     }
     let milikku = bacaJSON(LS_MINE, {});
+
+    /* Pengunjung baru selalu mulai sebagai ANONIM: status owner hanya
+       muncul kalau kunci pernah dimasukkan di browser ini (dan masih sah). */
     try { token = localStorage.getItem(LS_TOKEN) || ""; } catch (e) {}
 
     function simpanMilikku() {
@@ -868,7 +892,11 @@
       try { localStorage.setItem(LS_MINE, JSON.stringify(milikku)); } catch (e) {}
     }
     const punyaKunci = (id) => !!milikku[String(id)];
-    const bolehUbah = (c) => !!token || punyaKunci(c.id);
+    /* Ubah: komentar sendiri (punya kunci), atau komentar owner kalau kamu owner.
+       Owner TIDAK boleh mengubah komentar orang lain. */
+    const bisaUbah = (c) => punyaKunci(c.id) || (!!token && !!c.owner);
+    /* Hapus: komentar sendiri, atau apa pun kalau kamu owner. */
+    const bisaHapus = (c) => punyaKunci(c.id) || !!token;
 
     function esc(s) { return String(s == null ? "" : s); }
 
@@ -890,6 +918,24 @@
       try {
         return new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
       } catch (e) { return new Date(iso).toLocaleDateString(); }
+    }
+
+    /* baris status: memperlihatkan dengan jelas apakah kamu anonim atau owner */
+    function perbaruiStatus() {
+      if (!elStatus) return;
+      if (token) {
+        elStatus.className = "cm-status own";
+        elStatusText.innerHTML = "Mode owner — komentar darimu berlencana <b>OWNER</b>.";
+        return;
+      }
+      elStatus.className = "cm-status";
+      const nama = elName.value.trim();
+      if (nama.length >= 2) {
+        elStatusText.innerHTML = 'Anonim — komentar darimu tampil sebagai <b></b>.';
+        elStatusText.querySelector("b").textContent = nama;
+      } else {
+        elStatusText.textContent = "Anonim — pilih username dulu sebelum menulis.";
+      }
     }
 
     function pesan(teks, jenis) {
@@ -1031,9 +1077,9 @@
       const balasBtn = tombolMini("Balas", "", () => mulaiBalas(Object.assign({}, c, { induk: akarId })));
       tools.appendChild(balasBtn);
 
-      if (bolehUbah(c) && !(ubah && ubah.id === c.id)) {
-        tools.appendChild(tombolMini("Ubah", "", () => { ubah = { id: c.id, isi: c.isi }; renderUlang(); }));
-        tools.appendChild(tombolMini("Hapus", "del", (e) => hapus(c, e.target)));
+      if (!(ubah && ubah.id === c.id)) {
+        if (bisaUbah(c)) tools.appendChild(tombolMini("Ubah", "", () => { ubah = { id: c.id, isi: c.isi }; renderUlang(); }));
+        if (bisaHapus(c)) tools.appendChild(tombolMini("Hapus", "del", (e) => hapus(c, e.target)));
       }
       head.appendChild(tools);
 
@@ -1206,7 +1252,7 @@
         body: JSON.stringify({
           p_id: c.id,
           p_isi: isi,
-          p_kunci: token ? null : (milikku[String(c.id)] || null),
+          p_kunci: milikku[String(c.id)] || null,
           p_token: token || null
         })
       }).then((hasil) => {
@@ -1225,7 +1271,7 @@
 
     /* ---------- hapus ---------- */
     function hapus(c, tombol) {
-      if (!bolehUbah(c)) return;
+      if (!bisaHapus(c)) return;
       if (!confirm("Hapus komentar ini? Balasan di bawahnya juga ikut terhapus.")) return;
       if (tombol) tombol.disabled = true;
 
@@ -1234,7 +1280,7 @@
         body: JSON.stringify({
           p_id: c.id,
           p_token: token || null,
-          p_kunci: token ? null : (milikku[String(c.id)] || null)
+          p_kunci: milikku[String(c.id)] || null
         })
       }).then(() => {
         pesan("Komentar dihapus.", "ok");
@@ -1255,11 +1301,12 @@
         elOwnChip.hidden = false;
         $("cmOwnerLink").textContent = "Keluar dari mode owner";
         if (!elName.value.trim()) elName.value = "AzurePet";
-        pesan("Mode owner aktif — bisa mengubah & menghapus komentar siapa saja.", "ok");
+        pesan("Mode owner aktif — kamu bisa menghapus komentar siapa saja, dan mengubah komentar sendiri.", "ok");
       } else {
         elOwnChip.hidden = true;
         $("cmOwnerLink").textContent = "Masuk sebagai owner";
       }
+      perbaruiStatus();
       ubah = null;
       muat();
     }
@@ -1275,6 +1322,7 @@
     function perbaruiJumlah() {
       elCount.textContent = elText.value.length + "/600";
       elCountN.textContent = elName.value.length + "/24";
+      perbaruiStatus();
     }
 
     /* ---------- pasang event ---------- */
@@ -1315,12 +1363,28 @@
 
     elToken.addEventListener("keydown", (e) => { if (e.key === "Enter") $("cmOwnOk").click(); });
 
+    /* kunci owner yang tersimpan diperiksa sekali; kalau sudah tidak sah
+       (misalnya kunci di database diganti), status owner dicabut. */
+    function periksaTokenTersimpan() {
+      if (!token) return;
+      cekToken(token).catch((e) => {
+        if (!/salah/i.test(String(e.message || ""))) return;     /* jaringan bermasalah: jangan hapus */
+        token = "";
+        try { localStorage.removeItem(LS_TOKEN); } catch (err) {}
+        elOwnChip.hidden = true;
+        $("cmOwnerLink").textContent = "Masuk sebagai owner";
+        perbaruiStatus();
+        pesan("Kunci owner yang tersimpan sudah tidak berlaku. Silakan masuk lagi.", "err");
+        muat();
+      });
+    }
+
     /* ---------- mulai ---------- */
     try { const n = localStorage.getItem(LS_NAME); if (n) elName.value = n; } catch (e) {}
     perbaruiJumlah();
-    if (token) modeOwner(true); else muat();
+    if (token) { modeOwner(true); periksaTokenTersimpan(); } else muat();
   })();
 
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5e8e13aba85b5ba',t:'MTc5NTM2MDQyNA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5e8e13aba85b5ba',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5eb475d08512567',t:'MTc5NTM4NTU3OQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5eb475d08512567',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
