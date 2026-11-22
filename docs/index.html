@@ -27,7 +27,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AzurePet — karakter 3D yang berjalan-jalan di desktop</title>
+<title>Pratinjau kolom komentar — AzurePet</title>
 <meta name="description" content="AzurePet menampilkan karakter 3D (.glb) milikmu yang berjalan-jalan di desktop. Tersedia untuk macOS (Apple Silicon & Intel), Windows (x86 & ARM), dan Linux.">
 <meta name="theme-color" content="#ffe6ee">
 <meta property="og:title" content="AzurePet — karakter 3D di desktop">
@@ -200,9 +200,163 @@
     .nav.open .nav-cta{display:flex; position:absolute; top:calc(64px + 168px); left:20px; right:20px}
   }
   @media (prefers-reduced-motion:reduce){ .pet{animation:none} html{scroll-behavior:auto} }
+  /* ---------- komentar ---------- */
+  .cm-sub{text-align:center; color:var(--muted); font-size:14.5px; margin:-20px auto 0; max-width:54ch}
+  .cm-card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; margin-top:26px}
+  .cm-form{display:flex; flex-direction:column; gap:10px; padding-bottom:16px; border-bottom:1px dashed var(--line)}
+  .cm-in,.cm-ta{width:100%; font:inherit; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:12px; padding:11px 14px; outline:none; transition:border-color .15s, box-shadow .15s}
+  .cm-in{max-width:300px}
+  .cm-in:focus,.cm-ta:focus{border-color:var(--pink-400); box-shadow:0 0 0 3px rgba(244,143,177,.18)}
+  .cm-ta{resize:vertical; min-height:86px; line-height:1.55}
+  .cm-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .cm-count{font-size:12px; color:var(--muted); margin-left:auto; font-variant-numeric:tabular-nums}
+  .cm-bot{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .cm-remember{font-size:13px; color:var(--muted); display:inline-flex; align-items:center; gap:6px; cursor:pointer; user-select:none}
+  .cm-remember input{accent-color:var(--pink-500); width:15px; height:15px}
+  .cm-bot .btn{padding:9px 20px; font-size:14px; margin-left:auto}
+  .cm-bot .btn[disabled]{opacity:.6; cursor:progress}
+  .cm-msg{font-size:13.5px; min-height:17px; color:var(--muted)}
+  .cm-msg.ok{color:var(--green)}
+  .cm-msg.err{color:#d1345b}
+  .cm-hp{position:absolute !important; left:-9999px !important; width:1px; height:1px; opacity:0; pointer-events:none}
+
+  .cm-list{display:flex; flex-direction:column; margin-top:4px}
+  .cm-item{display:block; padding:15px 0; border-bottom:1px solid #fdeaf2}
+  .cm-rowline{display:flex; gap:12px; align-items:flex-start}
+  .cm-item:last-child{border-bottom:0; padding-bottom:4px}
+  .cm-av{width:38px; height:38px; flex:0 0 auto; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:15px; color:#fff;
+    background:linear-gradient(140deg,var(--pink-300),var(--pink-500)); box-shadow:0 4px 10px -4px rgba(226,77,131,.6); text-transform:uppercase}
+  .cm-item.own .cm-av{background:linear-gradient(140deg,#8ec2ff,#2f7cf6); box-shadow:0 4px 10px -4px rgba(47,124,246,.55)}
+  .cm-body{min-width:0; flex:1}
+  .cm-head{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:2px}
+  .cm-name{font-weight:700; font-size:14.5px}
+  .cm-time{font-size:12px; color:var(--muted)}
+  .cm-text{font-size:14.8px; color:#6d3a4e; white-space:pre-wrap; overflow-wrap:anywhere; margin:0}
+  .cm-del{margin-left:auto; background:none; border:0; color:var(--muted); font-size:12px; cursor:pointer; padding:2px 6px; border-radius:6px}
+  .cm-del:hover{color:#d1345b; background:var(--pink-100)}
+  .badge-own{display:inline-flex; align-items:center; gap:4px; background:rgba(47,124,246,.10); color:#2f7cf6;
+    border:1px solid rgba(47,124,246,.3); padding:1px 8px 1px 5px; border-radius:999px; font-size:10.5px; font-weight:800;
+    letter-spacing:.07em; text-transform:uppercase; line-height:1.6}
+  .badge-own svg{width:13px; height:13px; display:block}
+  .cm-empty{text-align:center; color:var(--muted); font-size:14px; padding:28px 0 22px}
+  .cm-foot{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:14px; font-size:12px; color:var(--muted)}
+  .cm-foot .sep{opacity:.5}
+  .cm-foot button{background:none; border:0; padding:0; font:inherit; color:var(--muted); text-decoration:underline; cursor:pointer}
+  .cm-foot button:hover{color:var(--pink-600)}
+  .cm-own-box{display:none; gap:8px; margin-top:10px; align-items:center; flex-wrap:wrap}
+  .cm-own-box.on{display:flex}
+  .cm-own-box .cm-in{max-width:none; flex:1; min-width:190px}
+
+  /* ---------- balasan ---------- */
+  .cm-rep-bar{display:flex; align-items:center; gap:8px; background:var(--pink-100); border:1px solid var(--line);
+    color:var(--pink-600); font-size:13px; padding:7px 12px; border-radius:10px}
+  .cm-rep-bar b{font-weight:700}
+  .cm-rep-bar button{margin-left:auto; background:#fff; border:1px solid var(--line); color:var(--pink-600);
+    border-radius:999px; padding:3px 11px; font:inherit; font-size:12px; cursor:pointer}
+  .cm-rep-bar button:hover{background:var(--pink-50)}
+  .cm-item[hidden]{display:none}
+  .cm-rep-btn{margin-left:6px; background:none; border:0; color:var(--muted); font-size:12px; cursor:pointer;
+    padding:2px 6px; border-radius:6px; white-space:nowrap}
+  .cm-rep-btn:hover{color:var(--pink-600); background:var(--pink-100)}
+  .cm-tools{margin-left:auto; display:flex; align-items:center; gap:2px}
+  @media (max-width:560px){
+    .cm-tools{margin-left:0}
+    .cm-head{gap:6px}
+    .cm-reps{padding:2px 10px}
+  }
+  /* balasan tampil DI BAWAH komentar induk, rata kiri, bukan menjorok ke samping */
+  .cm-reps{margin:10px 0 2px; padding:2px 14px; background:var(--pink-50);
+    border:1px solid #fdeaf2; border-radius:14px; display:flex; flex-direction:column}
+  .cm-reps .cm-item{padding:12px 0; border-bottom:1px dashed #fbe0ea}
+  .cm-reps .cm-item:last-child{border-bottom:0; padding-bottom:10px}
+  .cm-reps .cm-av{width:32px; height:32px; font-size:13px}
+  .cm-av.sm{width:32px; height:32px; font-size:13px; box-shadow:none}
+  .cm-mention{display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--muted);
+    background:#fff; border:1px solid var(--line); border-radius:999px; padding:0 8px 0 6px; margin-bottom:3px}
+  .cm-mention b{color:var(--pink-600); font-weight:700}
+  .cm-flash{animation:cmflash 1.6s ease-out}
+  @keyframes cmflash{0%{background:#ffe9f1}100%{background:transparent}}
+
+  /* ---------- ubah & hapus ---------- */
+  .cm-mini{margin-left:4px; background:none; border:0; color:var(--muted); font-size:12px; cursor:pointer;
+    padding:2px 6px; border-radius:6px; white-space:nowrap}
+  .cm-mini:hover{color:var(--pink-600); background:var(--pink-100)}
+  .cm-mini.del:hover{color:#d1345b}
+  .cm-mini[disabled]{opacity:.5; cursor:progress}
+  .cm-diedit{font-size:11.5px; color:var(--muted); font-style:italic}
+  .cm-edit{display:flex; flex-direction:column; gap:8px; margin-top:6px}
+  .cm-edit textarea{width:100%; font:inherit; font-size:14.5px; line-height:1.55; color:var(--ink); background:#fff;
+    border:1px solid var(--pink-400); border-radius:10px; padding:9px 12px; resize:vertical; min-height:74px;
+    outline:none; box-shadow:0 0 0 3px rgba(244,143,177,.18)}
+  .cm-edit-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  .cm-edit-row .sisa{font-size:11.5px; color:var(--muted); margin-left:auto; font-variant-numeric:tabular-nums}
+  .cm-btn-sm{border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--pink-600);
+    font:inherit; font-size:12.5px; font-weight:600; padding:5px 14px; cursor:pointer}
+  .cm-btn-sm:hover{background:var(--pink-100)}
+  .cm-btn-sm.simpan{background:linear-gradient(180deg,var(--pink-400),var(--pink-500)); color:#fff; border-color:transparent}
+  .cm-btn-sm.simpan:hover{background:linear-gradient(180deg,var(--pink-300),var(--pink-400))}
+
 </style>
 </head>
 <body>
+<!-- ====== HANYA UNTUK PRATINJAU: data contoh, tanpa internet ====== -->
+<script>
+(function(){
+  var M=60000, J=3600000, H=86400000, now=Date.now();
+  var DB=[
+    {id:7,dibuat:new Date(now-3*M).toISOString(),nama:"rizky",isi:"baru coba di Linux Mint, jalan mulus. makasih ya!",owner:false,diedit:false,induk:null,balas_ke:null,kunci:"kunci-rizky"},
+    {id:8,dibuat:new Date(now-2*M).toISOString(),nama:"AzurePet",isi:"Sama-sama! Kalau ada yang aneh di Linux, tulis di sini lagi ya.",owner:true,diedit:false,induk:7,balas_ke:"rizky",kunci:null},
+    {id:6,dibuat:new Date(now-40*M).toISOString(),nama:"dewi_art",isi:"Model .glb hasil Blender sendiri bisa dipakai?",owner:false,diedit:false,induk:null,balas_ke:null,kunci:"kunci-dewi"},
+    {id:9,dibuat:new Date(now-31*M).toISOString(),nama:"anton",isi:"Ikut penasaran, saya juga bikin karakter sendiri.",owner:false,diedit:false,induk:6,balas_ke:"dewi_art",kunci:"kunci-anton"},
+    {id:10,dibuat:new Date(now-28*M).toISOString(),nama:"AzurePet",isi:"Bisa banget. Idle, Walk, Drag, dan Klik dipilih sendiri dari daftar animasi di dalam file .glb-mu.",owner:true,diedit:false,induk:6,balas_ke:"dewi_art",kunci:null},
+    {id:5,dibuat:new Date(now-3*J).toISOString(),nama:"sinta",isi:"Ada rencana versi Android nggak? hehe",owner:false,diedit:false,induk:null,balas_ke:null,kunci:"kunci-sinta"},
+    {id:11,dibuat:new Date(now-2*J).toISOString(),nama:"AzurePet",isi:"Belum ada rencananya, tapi kalau ramai kenapa tidak :)",owner:true,diedit:false,induk:5,balas_ke:"sinta",kunci:null},
+    {id:4,dibuat:new Date(now-1*H).toISOString(),nama:"budi",isi:"di Windows 11 muncul peringatan SmartScreen, aman kan?",owner:false,diedit:false,induk:null,balas_ke:null,kunci:"kunci-budi"},
+    {id:12,dibuat:new Date(now-20*H).toISOString(),nama:"AzurePet",isi:"Aman. Klik More info -> Run anyway. Peringatan itu karena aplikasinya belum ditandatangani sertifikat digital berbayar.",owner:true,diedit:false,induk:4,balas_ke:"budi",kunci:null}
+  ];
+  var next=100;
+  function kePublic(c){ return {id:c.id,dibuat:c.dibuat,nama:c.nama,isi:c.isi,owner:c.owner,diedit:c.diedit,induk:c.induk,balas_ke:c.balas_ke}; }
+  function boleh(q){ return q.p_token==='owner-demo' || (q.p_kunci && (DB.find(function(c){return c.id===q.p_id;})||{}).kunci===q.p_kunci); }
+  function ok(b){ return Promise.resolve({ok:true,status:200,text:function(){return Promise.resolve(JSON.stringify(b))}}); }
+  function gagal(m){ return Promise.resolve({ok:false,status:400,text:function(){return Promise.resolve(JSON.stringify({message:m}))}}); }
+  window.fetch=function(url,opt){
+    var q=opt&&opt.body?JSON.parse(opt.body):{};
+    var b=null;
+    if(url.indexOf('rpc/kirim_komentar')>-1){
+      var own=(q.p_token==='owner-demo');
+      var row={id:next++,dibuat:new Date().toISOString(),nama:q.p_nama,isi:q.p_isi,owner:own,diedit:false,
+               induk:q.p_induk||null,balas_ke:q.p_balas_ke||null,kunci:own?null:'kunci-baru-'+next};
+      DB.unshift(row); var pub=kePublic(row); pub.kunci=row.kunci; return ok(pub);
+    }
+    if(url.indexOf('rpc/ubah_komentar')>-1){
+      if(!boleh(q)) return gagal('Kamu hanya bisa mengubah komentarmu sendiri.');
+      var c=DB.find(function(x){return x.id===q.p_id;});
+      if(!c) return gagal('Komentar sudah tidak ada.');
+      if(c.owner && q.p_token!=='owner-demo') return gagal('Komentar pemilik situs tidak bisa diubah.');
+      c.isi=q.p_isi; c.diedit=true; return ok(kePublic(c));
+    }
+    if(url.indexOf('rpc/hapus_komentar')>-1){
+      if(q.p_id<0) return q.p_token==='owner-demo'?ok(true):gagal('Kunci owner salah.');
+      if(!boleh(q)) return gagal('Kamu hanya bisa menghapus komentarmu sendiri.');
+      var c2=DB.find(function(x){return x.id===q.p_id;});
+      if(c2&&c2.owner&&q.p_token!=='owner-demo') return gagal('Komentar pemilik situs tidak bisa dihapus.');
+      var buang=[q.p_id], ubah=true;
+      while(ubah){ ubah=false; DB.forEach(function(c){ if(buang.indexOf(c.induk)>-1&&buang.indexOf(c.id)<0){buang.push(c.id);ubah=true;} }); }
+      DB=DB.filter(function(c){return buang.indexOf(c.id)<0;}); return ok(true);
+    }
+    if(url.indexOf('/rest/v1/komentar')>-1){
+      return ok(DB.map(kePublic).sort(function(a,z){return new Date(z.dibuat)-new Date(a.dibuat);}));
+    }
+    return ok(null);
+  };
+  window.confirm=function(){return true;};
+  try{
+    localStorage.setItem('azurepet_nama','kamu');
+    /* dua komentar contoh dianggap milik pengunjung pratinjau ini */
+    localStorage.setItem('azurepet_kunci_komentar', JSON.stringify({"7":"kunci-rizky","4":"kunci-budi"}));
+  }catch(e){}
+})();
+</script>
 
 <header class="nav" id="nav">
   <div class="wrap nav-in">
@@ -212,6 +366,7 @@
       <a href="#fitur">Fitur</a>
       <a href="#pasang">Cara pasang</a>
       <a href="#tanya">Pertanyaan</a>
+      <a href="#komentar">Komentar</a>
     </nav>
     <div class="nav-cta">
       <a class="btn btn-ghost" href="https://github.com/MatahariZzz/AzurePet" id="ghLink">GitHub</a>
@@ -507,6 +662,57 @@
       </details>
     </div>
   </section>
+  <section id="komentar" style="background:linear-gradient(180deg,#fff8fa,#ffeef4)">
+    <div class="wrap" style="max-width:820px">
+      <div class="sec-head">
+        <h2>Komentar &amp; masukan</h2>
+      </div>
+      <p class="cm-sub">Tidak perlu akun, tidak perlu email. Pilih username dulu, lalu tulis apa saja.</p>
+
+      <div class="cm-card" id="cmCard">
+        <div class="cm-form">
+          <div class="cm-row">
+            <input class="cm-in" id="cmName" maxlength="24" autocomplete="nickname" placeholder="Username kamu" aria-label="Username">
+            <input class="cm-hp" id="cmHp" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <span class="cm-count" id="cmCountName">0/24</span>
+          </div>
+          <div class="cm-rep-bar" id="cmRepBar" hidden>
+            <span>Membalas <b id="cmRepTo">@nama</b></span>
+            <button type="button" id="cmRepCancel">Batal</button>
+          </div>
+          <textarea class="cm-ta" id="cmText" maxlength="600" placeholder="Tulis komentar, saran, atau laporan bug…" aria-label="Komentar"></textarea>
+          <div class="cm-row">
+            <span class="cm-count" id="cmCount">0/600</span>
+          </div>
+          <div class="cm-bot">
+            <label class="cm-remember"><input type="checkbox" id="cmRemember" checked> Ingat username saya</label>
+            <span id="cmOwnerChip" class="badge-own" hidden>
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="#2f7cf6"/><path d="M5.6 10.3l2.6 2.6 6-6.1" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Owner
+            </span>
+            <button class="btn btn-primary" id="cmSend" type="button">Kirim komentar</button>
+          </div>
+          <div class="cm-msg" id="cmMsg" role="status" aria-live="polite"></div>
+          <div class="cm-own-box" id="cmOwnBox">
+            <input class="cm-in" id="cmToken" type="password" autocomplete="off" placeholder="Kunci owner">
+            <button class="btn btn-ghost" id="cmOwnOk" type="button" style="padding:9px 16px;font-size:14px">Masuk</button>
+            <button class="btn btn-ghost" id="cmOwnCancel" type="button" style="padding:9px 16px;font-size:14px">Batal</button>
+          </div>
+        </div>
+
+        <div class="cm-list" id="cmList">
+          <div class="cm-empty">Memuat komentar…</div>
+        </div>
+
+        <div class="cm-foot">
+          <span id="cmStat">—</span>
+          <span class="sep">·</span>
+          <button id="cmOwnerLink" type="button">Masuk sebagai owner</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
@@ -613,6 +819,508 @@
   const nav = document.getElementById("nav");
   document.getElementById("burger").addEventListener("click", () => nav.classList.toggle("open"));
   document.querySelectorAll(".nav-links a").forEach(a => a.addEventListener("click", () => nav.classList.remove("open")));
+  /* ============================================================
+     KOMENTAR — anonim, tanpa akun, bisa dibalas, diubah, dihapus.
+
+     Aturan hak akses (ditegakkan di DATABASE, bukan cuma di layar):
+       • Pengunjung hanya bisa mengubah/menghapus komentarnya sendiri.
+         Caranya: setiap komentar baru mendapat "kunci" acak yang
+         dikembalikan sekali ke browser pembuatnya, lalu disimpan di
+         localStorage. Tabel kuncinya tidak bisa dibaca siapa pun.
+       • Owner (memakai kunci rahasia) bisa mengubah/menghapus
+         komentar siapa saja, termasuk memberi lencana OWNER.
+
+     YANG PERLU DIISI: dua nilai di bawah (lihat PANDUAN-KOMENTAR.md).
+     ============================================================ */
+  (function () {
+    const SB_URL  = "https://contohpratinjau.supabase.co";   /* contoh: "https://abcdefghijklm.supabase.co" */
+    const SB_KEY  = "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";   /* contoh: "eyJhbGciOiJIUzI1NiIsInR5cCI6..." */
+
+    const LS_NAME  = "azurepet_nama";
+    const LS_TOKEN = "azurepet_kunci_owner";
+    const LS_TIME  = "azurepet_komentar_terakhir";
+    const LS_MINE  = "azurepet_kunci_komentar";     /* { id: kunci } milik orang ini */
+    const COOLDOWN = 15000;
+    const CADANGAN = ["owner", "admin", "administrator", "pemilik", "moderator", "azurepet", "official"];
+
+    const $ = (id) => document.getElementById(id);
+    const elCard = $("cmCard"), elList = $("cmList"), elName = $("cmName"), elText = $("cmText");
+    const elSend = $("cmSend"), elMsg = $("cmMsg"), elCount = $("cmCount"), elCountN = $("cmCountName");
+    const elRem = $("cmRemember"), elHp = $("cmHp"), elStat = $("cmStat");
+    const elOwnBox = $("cmOwnBox"), elToken = $("cmToken"), elOwnChip = $("cmOwnerChip");
+    const elRepBar = $("cmRepBar"), elRepTo = $("cmRepTo");
+    if (!elCard) return;
+
+    const aktif = /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SB_URL.replace(/\/+$/, "")) && SB_KEY.length > 40;
+    let token = "", balas = null, ubah = null, barisTerakhir = [];
+
+    function bacaJSON(kunci, cadangan) {
+      try { return JSON.parse(localStorage.getItem(kunci) || "null") || cadangan; } catch (e) { return cadangan; }
+    }
+    let milikku = bacaJSON(LS_MINE, {});
+    try { token = localStorage.getItem(LS_TOKEN) || ""; } catch (e) {}
+
+    function simpanMilikku() {
+      const id = Object.keys(milikku);
+      if (id.length > 120) {                       /* simpan 120 terakhir saja */
+        id.slice(0, id.length - 120).forEach((k) => { delete milikku[k]; });
+      }
+      try { localStorage.setItem(LS_MINE, JSON.stringify(milikku)); } catch (e) {}
+    }
+    const punyaKunci = (id) => !!milikku[String(id)];
+    const bolehUbah = (c) => !!token || punyaKunci(c.id);
+
+    function esc(s) { return String(s == null ? "" : s); }
+
+    /* gulir aman: sebagian browser/pratinjau tidak punya scrollIntoView */
+    function geser(el, opsi) {
+      try { if (el && typeof el.scrollIntoView === "function") el.scrollIntoView(opsi); } catch (e) {}
+    }
+
+    const CHECK = '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="#2f7cf6"/><path d="M5.6 10.3l2.6 2.6 6-6.1" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    function waktu(iso) {
+      const t = new Date(iso).getTime();
+      if (!t) return "";
+      const d = Math.max(0, Math.floor((Date.now() - t) / 1000));
+      if (d < 45) return "baru saja";
+      if (d < 3600) return Math.round(d / 60) + " menit lalu";
+      if (d < 86400) return Math.round(d / 3600) + " jam lalu";
+      if (d < 2592000) return Math.round(d / 86400) + " hari lalu";
+      try {
+        return new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+      } catch (e) { return new Date(iso).toLocaleDateString(); }
+    }
+
+    function pesan(teks, jenis) {
+      elMsg.textContent = teks || "";
+      elMsg.className = "cm-msg" + (jenis ? " " + jenis : "");
+    }
+
+    /* ---------- panggilan Supabase ---------- */
+    function api(path, opsi) {
+      opsi = opsi || {};
+      const h = Object.assign({
+        "apikey": SB_KEY,
+        "Authorization": "Bearer " + SB_KEY,
+        "Content-Type": "application/json"
+      }, opsi.headers || {});
+      return fetch(SB_URL.replace(/\/+$/, "") + path, Object.assign({}, opsi, { headers: h, cache: "no-store" }))
+        .then(async (r) => {
+          const teks = await r.text();
+          let data = null;
+          try { data = teks ? JSON.parse(teks) : null; } catch (e) {}
+          if (!r.ok) {
+            const m = (data && (data.message || data.error_description || data.hint)) || ("HTTP " + r.status);
+            throw new Error(m);
+          }
+          return data;
+        });
+    }
+
+    /* ---------- tampilan ---------- */
+    function kosong(teks) {
+      elList.innerHTML = "";
+      const d = document.createElement("div");
+      d.className = "cm-empty";
+      d.textContent = teks;
+      elList.appendChild(d);
+    }
+
+    function tombolMini(label, kelas, klik) {
+      const b = document.createElement("button");
+      b.className = "cm-mini" + (kelas ? " " + kelas : "");
+      b.type = "button";
+      b.textContent = label;
+      b.addEventListener("click", klik);
+      return b;
+    }
+
+    function editorUbah(c, kecil) {
+      const box = document.createElement("div");
+      box.className = "cm-edit";
+
+      const ta = document.createElement("textarea");
+      ta.id = "cm-edit-" + c.id;
+      ta.maxLength = 600;
+      ta.value = ubah.isi;
+      box.appendChild(ta);
+
+      const row = document.createElement("div");
+      row.className = "cm-edit-row";
+
+      const simpan = document.createElement("button");
+      simpan.className = "cm-btn-sm simpan";
+      simpan.type = "button";
+      simpan.textContent = "Simpan";
+      simpan.addEventListener("click", () => simpanUbah(c, ta, simpan));
+
+      const batal = document.createElement("button");
+      batal.className = "cm-btn-sm";
+      batal.type = "button";
+      batal.textContent = "Batal";
+      batal.addEventListener("click", () => { ubah = null; renderUlang(); });
+
+      const sisa = document.createElement("span");
+      sisa.className = "sisa";
+      const hitung = () => { sisa.textContent = ta.value.length + "/600"; };
+      ta.addEventListener("input", hitung);
+      hitung();
+
+      row.appendChild(simpan);
+      row.appendChild(batal);
+      row.appendChild(sisa);
+      box.appendChild(row);
+
+      ta.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") simpanUbah(c, ta, simpan);
+        if (e.key === "Escape") { ubah = null; renderUlang(); }
+      });
+
+      setTimeout(() => {
+        try { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } catch (e) {}
+      }, 30);
+
+      return box;
+    }
+
+    function buatItem(c, akarId, kecil) {
+      const item = document.createElement("div");
+      item.className = "cm-item" + (c.owner ? " own" : "");
+      item.id = "cm-" + c.id;
+
+      const av = document.createElement("div");
+      av.className = "cm-av" + (kecil ? " sm" : "");
+      av.textContent = (esc(c.nama).trim()[0] || "?").toUpperCase();
+
+      const body = document.createElement("div");
+      body.className = "cm-body";
+
+      const head = document.createElement("div");
+      head.className = "cm-head";
+
+      const nm = document.createElement("span");
+      nm.className = "cm-name";
+      nm.textContent = esc(c.nama);
+      head.appendChild(nm);
+
+      if (c.owner) {
+        const b = document.createElement("span");
+        b.className = "badge-own";
+        b.innerHTML = CHECK + "<span>Owner</span>";
+        b.title = "Ditulis oleh pemilik AzurePet";
+        head.appendChild(b);
+      }
+
+      const tm = document.createElement("span");
+      tm.className = "cm-time";
+      tm.textContent = waktu(c.dibuat);
+      if (c.dibuat) tm.title = new Date(c.dibuat).toLocaleString("id-ID");
+      head.appendChild(tm);
+
+      if (c.diedit) {
+        const de = document.createElement("span");
+        de.className = "cm-diedit";
+        de.textContent = "· diedit";
+        de.title = "Komentar ini pernah diubah penulisnya";
+        head.appendChild(de);
+      }
+
+      const tools = document.createElement("div");
+      tools.className = "cm-tools";
+      const balasBtn = tombolMini("Balas", "", () => mulaiBalas(Object.assign({}, c, { induk: akarId })));
+      tools.appendChild(balasBtn);
+
+      if (bolehUbah(c) && !(ubah && ubah.id === c.id)) {
+        tools.appendChild(tombolMini("Ubah", "", () => { ubah = { id: c.id, isi: c.isi }; renderUlang(); }));
+        tools.appendChild(tombolMini("Hapus", "del", (e) => hapus(c, e.target)));
+      }
+      head.appendChild(tools);
+
+      body.appendChild(head);
+
+      if (c.balas_ke) {
+        const m = document.createElement("span");
+        m.className = "cm-mention";
+        m.innerHTML = "↳ membalas <b></b>";
+        m.querySelector("b").textContent = "@" + c.balas_ke;
+        body.appendChild(m);
+      }
+
+      if (ubah && ubah.id === c.id) {
+        body.appendChild(editorUbah(c, kecil));
+      } else {
+        const tx = document.createElement("p");
+        tx.className = "cm-text";
+        tx.textContent = esc(c.isi);
+        body.appendChild(tx);
+      }
+
+      const baris = document.createElement("div");
+      baris.className = "cm-rowline";
+      baris.appendChild(av);
+      baris.appendChild(body);
+      item.appendChild(baris);
+      return item;
+    }
+
+    function gambar(rows) {
+      barisTerakhir = rows;
+      elList.innerHTML = "";
+      if (!rows.length) { kosong("Belum ada komentar. Jadilah yang pertama ✨"); elStat.textContent = "0 komentar"; return; }
+
+      const akar = [], anak = {};
+      rows.forEach((c) => {
+        if (c.induk) { (anak[c.induk] = anak[c.induk] || []).push(c); }
+        else akar.push(c);
+      });
+
+      let jmlBalasan = 0;
+      akar.forEach((c) => {
+        const item = buatItem(c, c.id, false);
+        const daftar = (anak[c.id] || []).slice().sort((a, b) => new Date(a.dibuat) - new Date(b.dibuat));
+        if (daftar.length) {
+          const box = document.createElement("div");
+          box.className = "cm-reps";
+          daftar.forEach((r) => { box.appendChild(buatItem(r, c.id, true)); });
+          item.appendChild(box);
+          jmlBalasan += daftar.length;
+        }
+        elList.appendChild(item);
+      });
+
+      /* balasan yang induknya sudah terhapus tetap ditampilkan */
+      const yatim = Object.keys(anak).filter((k) => !akar.some((a) => String(a.id) === String(k)));
+      yatim.forEach((k) => {
+        anak[k].forEach((r) => elList.appendChild(buatItem(Object.assign({}, r, { induk: null }), r.id, false)));
+      });
+
+      elStat.textContent = akar.length + " komentar" + (jmlBalasan ? " · " + jmlBalasan + " balasan" : "");
+    }
+
+    function renderUlang() { gambar(barisTerakhir); }
+
+    function muat(flashId) {
+      if (!aktif) { kosong("Kolom komentar belum diaktifkan oleh pemilik situs."); elStat.textContent = "nonaktif"; return; }
+      api("/rest/v1/komentar?select=id,nama,isi,owner,diedit,dibuat,induk,balas_ke&order=dibuat.desc&limit=400")
+        .then((rows) => {
+          gambar(Array.isArray(rows) ? rows : []);
+          if (flashId) {
+            const el = document.getElementById("cm-" + flashId);
+            if (el) { el.classList.add("cm-flash"); geser(el, { block: "center", behavior: "smooth" }); }
+          }
+        })
+        .catch((e) => {
+          kosong("Komentar gagal dimuat. Coba muat ulang halaman ini.");
+          elStat.textContent = "gagal memuat";
+          console.warn("komentar:", e.message);
+        });
+    }
+
+    /* ---------- balas ---------- */
+    function mulaiBalas(c) {
+      balas = { induk: c.induk || c.id, ke: c.nama };
+      elRepTo.textContent = "@" + c.nama;
+      elRepBar.hidden = false;
+      pesan("");
+      geser(elCard, { block: "start", behavior: "smooth" });
+      setTimeout(() => { (elName.value.trim() ? elText : elName).focus(); }, 220);
+    }
+
+    function batalBalas() {
+      balas = null;
+      elRepBar.hidden = true;
+      elRepTo.textContent = "@nama";
+    }
+
+    $("cmRepCancel").addEventListener("click", batalBalas);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !elRepBar.hidden) batalBalas(); });
+
+    /* ---------- kirim ---------- */
+    function terkunci(ms) {
+      let t = 0;
+      try { t = Number(localStorage.getItem(LS_TIME) || 0); } catch (e) {}
+      return Math.max(0, t + ms - Date.now());
+    }
+
+    function kirim() {
+      if (!aktif) { pesan("Kolom komentar belum diaktifkan oleh pemilik situs.", "err"); return; }
+
+      if (elHp.value) { pesan("Komentar terkirim. Terima kasih!", "ok"); elText.value = ""; return; }
+
+      const nama = elName.value.trim().replace(/\s+/g, " ");
+      const isi  = elText.value.trim();
+
+      if (nama.length < 2) { pesan("Pilih username dulu (minimal 2 huruf).", "err"); elName.focus(); return; }
+      if (nama.length > 24) { pesan("Username maksimal 24 huruf.", "err"); return; }
+      if (!token && CADANGAN.indexOf(nama.toLowerCase()) !== -1) { pesan("Username itu dipakai pemilik situs. Pilih nama lain ya.", "err"); return; }
+      if (isi.length < 2) { pesan(balas ? "Tulis dulu balasanmu." : "Komentarnya masih kosong.", "err"); elText.focus(); return; }
+      if (isi.length > 600) { pesan("Komentar maksimal 600 huruf.", "err"); return; }
+
+      if (!token) {
+        const sisa = terkunci(COOLDOWN);
+        if (sisa > 0) { pesan("Sabar sebentar — coba lagi dalam " + Math.ceil(sisa / 1000) + " detik.", "err"); return; }
+      }
+
+      elSend.disabled = true;
+      pesan(balas ? "Mengirim balasan…" : (token ? "Mengirim komentar sebagai owner…" : "Mengirim komentar…"));
+
+      api("/rest/v1/rpc/kirim_komentar", {
+        method: "POST",
+        body: JSON.stringify({
+          p_nama: nama,
+          p_isi: isi,
+          p_token: token || null,
+          p_induk: balas ? balas.induk : null,
+          p_balas_ke: balas ? balas.ke : null
+        })
+      }).then((hasil) => {
+        if (hasil && hasil.kunci && hasil.id) { milikku[String(hasil.id)] = hasil.kunci; simpanMilikku(); }
+        if (elRem.checked) { try { localStorage.setItem(LS_NAME, nama); } catch (e) {} }
+        try { localStorage.setItem(LS_TIME, String(Date.now())); } catch (e) {}
+        elText.value = "";
+        perbaruiJumlah();
+        const adalahBalasan = !!balas;
+        batalBalas();
+        pesan(adalahBalasan ? "Balasan terkirim. Terima kasih!" : "Komentar terkirim. Terima kasih!", "ok");
+        muat(hasil && hasil.id ? hasil.id : null);
+      }).catch((e) => {
+        const m = String(e.message || "");
+        if (/Terlalu|harus|dipakai/i.test(m)) pesan(m, "err");
+        else if (/fetch|network|Failed/i.test(m)) pesan("Tidak bisa menghubungi server komentar. Periksa koneksi internetmu.", "err");
+        else pesan("Gagal mengirim: " + m, "err");
+      }).then(() => { elSend.disabled = false; });
+    }
+
+    /* ---------- ubah ---------- */
+    function simpanUbah(c, ta, tombol) {
+      const isi = ta.value.trim();
+      if (isi.length < 2) { pesan("Komentar tidak boleh kosong.", "err"); ta.focus(); return; }
+      if (isi.length > 600) { pesan("Komentar maksimal 600 huruf.", "err"); return; }
+
+      tombol.disabled = true;
+      pesan("Menyimpan perubahan…");
+
+      api("/rest/v1/rpc/ubah_komentar", {
+        method: "POST",
+        body: JSON.stringify({
+          p_id: c.id,
+          p_isi: isi,
+          p_kunci: token ? null : (milikku[String(c.id)] || null),
+          p_token: token || null
+        })
+      }).then((hasil) => {
+        const i = barisTerakhir.findIndex((x) => String(x.id) === String(c.id));
+        if (i > -1) { barisTerakhir[i].isi = isi; barisTerakhir[i].diedit = true; }
+        ubah = null;
+        renderUlang();
+        pesan("Komentar diperbarui.", "ok");
+      }).catch((e) => {
+        tombol.disabled = false;
+        const m = String(e.message || "");
+        if (/sendiri|izin|tidak berhak|kunci/i.test(m)) pesan(m, "err");
+        else pesan("Gagal menyimpan: " + m, "err");
+      });
+    }
+
+    /* ---------- hapus ---------- */
+    function hapus(c, tombol) {
+      if (!bolehUbah(c)) return;
+      if (!confirm("Hapus komentar ini? Balasan di bawahnya juga ikut terhapus.")) return;
+      if (tombol) tombol.disabled = true;
+
+      api("/rest/v1/rpc/hapus_komentar", {
+        method: "POST",
+        body: JSON.stringify({
+          p_id: c.id,
+          p_token: token || null,
+          p_kunci: token ? null : (milikku[String(c.id)] || null)
+        })
+      }).then(() => {
+        pesan("Komentar dihapus.", "ok");
+        delete milikku[String(c.id)]; simpanMilikku();
+        ubah = null;
+        muat();
+      }).catch((e) => {
+        if (tombol) tombol.disabled = false;
+        const m = String(e.message || "");
+        if (/sendiri|izin|tidak berhak|kunci/i.test(m)) pesan(m, "err");
+        else pesan("Gagal menghapus: " + m, "err");
+      });
+    }
+
+    /* ---------- mode owner ---------- */
+    function modeOwner(simpan) {
+      if (simpan) {
+        elOwnChip.hidden = false;
+        $("cmOwnerLink").textContent = "Keluar dari mode owner";
+        if (!elName.value.trim()) elName.value = "AzurePet";
+        pesan("Mode owner aktif — bisa mengubah & menghapus komentar siapa saja.", "ok");
+      } else {
+        elOwnChip.hidden = true;
+        $("cmOwnerLink").textContent = "Masuk sebagai owner";
+      }
+      ubah = null;
+      muat();
+    }
+
+    function cekToken(kunci) {
+      /* fungsi hapus_komentar hanya jalan kalau kuncinya benar; id -1 tidak menghapus apa pun */
+      return api("/rest/v1/rpc/hapus_komentar", {
+        method: "POST",
+        body: JSON.stringify({ p_id: -1, p_token: kunci })
+      });
+    }
+
+    function perbaruiJumlah() {
+      elCount.textContent = elText.value.length + "/600";
+      elCountN.textContent = elName.value.length + "/24";
+    }
+
+    /* ---------- pasang event ---------- */
+    elText.addEventListener("input", perbaruiJumlah);
+    elName.addEventListener("input", perbaruiJumlah);
+    elSend.addEventListener("click", kirim);
+    elText.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") kirim(); });
+
+    $("cmOwnerLink").addEventListener("click", () => {
+      if (token) {
+        token = "";
+        try { localStorage.removeItem(LS_TOKEN); } catch (e) {}
+        elOwnBox.classList.remove("on");
+        modeOwner(false);
+        return;
+      }
+      elOwnBox.classList.add("on");
+      elToken.focus();
+      pesan("Masukkan kunci owner yang kamu buat di Supabase.");
+    });
+
+    $("cmOwnCancel").addEventListener("click", () => { elOwnBox.classList.remove("on"); elToken.value = ""; pesan(""); });
+
+    $("cmOwnOk").addEventListener("click", () => {
+      const kunci = elToken.value.trim();
+      if (kunci.length < 8) { pesan("Kunci owner terlalu pendek.", "err"); return; }
+      pesan("Memeriksa kunci…");
+      cekToken(kunci).then(() => {
+        token = kunci;
+        try { localStorage.setItem(LS_TOKEN, kunci); } catch (e) {}
+        elToken.value = "";
+        elOwnBox.classList.remove("on");
+        modeOwner(true);
+      }).catch((e) => {
+        pesan(/token|salah|invalid|JWT|permission/i.test(e.message) ? "Kunci owner salah." : "Gagal memeriksa kunci: " + e.message, "err");
+      });
+    });
+
+    elToken.addEventListener("keydown", (e) => { if (e.key === "Enter") $("cmOwnOk").click(); });
+
+    /* ---------- mulai ---------- */
+    try { const n = localStorage.getItem(LS_NAME); if (n) elName.value = n; } catch (e) {}
+    perbaruiJumlah();
+    if (token) modeOwner(true); else muat();
+  })();
+
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5e8b3c4aa165844',t:'MTc5NTM1ODU2Mg=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5e8b3c4aa165844',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5e8e13aba85b5ba',t:'MTc5NTM2MDQyNA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5e8e13aba85b5ba',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
