@@ -13,7 +13,8 @@
   Nama file installer yang diharapkan ada di setiap Release:
       AzurePet-x64.dmg              (macOS Intel)
       AzurePet-arm64.dmg            (macOS Apple Silicon)
-      AzurePet-Windows-x86-Setup.exe   (Windows 10/11 32-bit & 64-bit)
+      AzurePet-Windows-x86-Setup.exe   (Windows 10/11 32-bit, juga jalan di 64-bit)
+      AzurePet-Windows-x64-Setup.exe   (Windows 10/11 64-bit)
       AzurePet-Windows-arm64-Setup.exe (Windows on ARM)
       AzurePet-Linux-x64.deb        (Linux 64-bit)
       AzurePet-Linux-arm64.deb      (Linux ARM64)
@@ -283,7 +284,12 @@
           <p class="req">Windows 10 / 11</p>
           <div class="arch">
             <a class="btn btn-primary dl" data-asset="AzurePet-Windows-x86-Setup.exe" href="#">
-              <span><span class="big">x86 · 32 &amp; 64-bit</span><span class="sub">satu installer untuk keduanya · .exe</span></span>
+              <span><span class="big">32-bit (x86)</span><span class="sub">Windows 32-bit · juga jalan di 64-bit · .exe</span></span>
+            </a>
+          </div>
+          <div class="arch">
+            <a class="btn btn-ghost dl" data-asset="AzurePet-Windows-x64-Setup.exe" href="#">
+              <span><span class="big">64-bit (x64)</span><span class="sub">Windows 64-bit · versi tercepat · .exe</span></span>
             </a>
           </div>
           <div class="arch">
@@ -397,7 +403,7 @@
           <li>Installer memasang AzurePet untuk pengguna kamu sendiri — tidak butuh hak administrator.</li>
           <li>Setelah selesai: shortcut ada di <b>Desktop</b>, dan aplikasinya bisa dicari di menu Start dengan kata kunci <b>AzurePet</b>.</li>
         </ol>
-        <p style="color:#7c4a5e;font-size:14px;margin:16px 0 0">Pakai installer <b>x86</b> untuk Windows biasa (32 maupun 64-bit). Pakai <b>ARM64</b> hanya kalau Windows kamu berjalan di perangkat ARM (Surface, Snapdragon).</p>
+        <p style="color:#7c4a5e;font-size:14px;margin:16px 0 0">Ragu pilih yang mana? Buka <b>Settings → System → About</b>, lihat baris <b>System type</b>: kalau tertulis “64-bit operating system, x64-based processor” pakai <b>64-bit (x64)</b>; kalau “32-bit” pakai <b>32-bit (x86)</b>. Installer 32-bit tetap bisa dipasang di Windows 64-bit, tapi versi 64-bit lebih ringan. Pakai <b>ARM64</b> hanya kalau perangkatmu ARM (Surface, Snapdragon).</p>
       </div>
 
       <div class="panel" id="p-linux">
@@ -437,6 +443,10 @@
       <details>
         <summary>Kenapa Windows / macOS memberi peringatan saat pertama dijalankan?</summary>
         <p>Karena aplikasinya belum ditandatangani dengan sertifikat digital berbayar (Windows code signing dan Apple Developer Program). Peringatan itu soal identitas pembuat, bukan virus. Klik <b>More info → Run anyway</b> di Windows, atau <b>klik kanan → Open</b> di macOS.</p>
+      </details>
+      <details>
+        <summary>Bedanya installer Windows 32-bit dan 64-bit apa?</summary>
+        <p>Isinya aplikasi yang sama, bedanya mesin Electron yang dipakai. Yang <b>64-bit (x64)</b> lebih ringan dan lebih cepat karena memakai arsitektur prosesor 64-bit secara penuh. Yang <b>32-bit (x86)</b> bisa dipasang di Windows 32-bit maupun 64-bit, jadi pilih ini kalau kamu tidak yakin. Kalau Windows-mu ARM (Surface, Snapdragon), pakai yang <b>ARM64</b>.</p>
       </details>
       <details>
         <summary>Apakah aplikasi ini butuh internet?</summary>
@@ -563,5 +573,5 @@
   document.getElementById("burger").addEventListener("click", () => nav.classList.toggle("open"));
   document.querySelectorAll(".nav-links a").forEach(a => a.addEventListener("click", () => nav.classList.remove("open")));
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5e56e6adf71d210',t:'MTc5NTMyNDI2NA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5e56e6adf71d210',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5e6efb99b706d18',t:'MTc5NTM0MDA0Ng=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5e6efb99b706d18',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
