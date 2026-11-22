@@ -3,9 +3,13 @@
   ============================================================
   AzurePet - halaman unduhan
   ------------------------------------------------------------
-  SEBELUM DIPASANG, ubah satu baris ini di dalam <script> di bawah:
-      const RELEASE_BASE = "https://github.com/USERNAME/AzurePet/releases/latest/download/";
-  Ganti USERNAME dengan username GitHub kamu (dan nama repo kalau berbeda).
+  TIDAK ADA YANG PERLU DIEDIT.
+  Username + nama repo dideteksi otomatis dari alamat halaman
+  (https://<user>.github.io/<repo>/), lalu semua tombol unduhan
+  mengarah ke  <repo>/releases/latest/download/<nama-file> .
+  Jadi file ini tetap benar walaupun nama repo-nya "Test" atau apa pun.
+  Cadangan kalau dibuka dari komputer (file://): FALLBACK_USER / FALLBACK_REPO
+  di dalam blok script paling bawah.
   Nama file installer yang diharapkan ada di setiap Release:
       AzurePet-x64.dmg              (macOS Intel)
       AzurePet-arm64.dmg            (macOS Apple Silicon)
@@ -203,7 +207,7 @@
       <a href="#tanya">Pertanyaan</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-ghost" href="https://github.com/USERNAME/AzurePet" id="ghLink">GitHub</a>
+      <a class="btn btn-ghost" href="https://github.com/MatahariZzz/AzurePet" id="ghLink">GitHub</a>
       <a class="btn btn-primary" href="#unduh">Unduh</a>
     </div>
     <button class="burger" id="burger" aria-label="Menu">☰</button>
@@ -315,7 +319,7 @@
           Ini normal untuk aplikasi gratis tanpa sertifikat berbayar — caranya ada di bagian <a href="#pasang">Cara pasang</a>. Kode sumbernya terbuka di GitHub.</div>
       </div>
 
-      <p class="allrel"><a href="https://github.com/USERNAME/AzurePet/releases" id="allRel">Lihat semua rilis &amp; catatan versi →</a></p>
+      <p class="allrel"><a href="https://github.com/MatahariZzz/AzurePet/releases" id="allRel">Lihat semua rilis &amp; catatan versi →</a></p>
     </div>
   </section>
 
@@ -458,8 +462,8 @@
   <div class="wrap foot">
     <div class="l"><span class="ico ifoot"></span> <span><b style="color:#5b2b3f">AzurePet</b> v1.12.0 · dibuat dengan Electron + three.js</span></div>
     <div>
-      <a href="https://github.com/USERNAME/AzurePet" id="ghLink2">GitHub</a> ·
-      <a href="https://github.com/USERNAME/AzurePet/releases" id="relLink2">Rilis</a> ·
+      <a href="https://github.com/MatahariZzz/AzurePet" id="ghLink2">GitHub</a> ·
+      <a href="https://github.com/MatahariZzz/AzurePet/releases" id="relLink2">Rilis</a> ·
       <a href="#pasang">Cara pasang</a>
     </div>
   </div>
@@ -469,19 +473,41 @@
 
 <script>
   /* ============================================================
-     SATU-SATUNYA yang perlu diubah: alamat rilis GitHub kamu.
-     Ganti USERNAME (dan nama repo kalau beda).
-     "latest/download" otomatis memakai rilis terbaru.
-     ============================================================ */
-  const RELEASE_BASE = "https://github.com/USERNAME/AzurePet/releases/latest/download/";
-  const REPO_URL     = "https://github.com/USERNAME/AzurePet";
-  const RELEASES_URL = "https://github.com/USERNAME/AzurePet/releases";
+     ALAMAT RILIS — DIDETEKSI OTOMATIS, TIDAK PERLU DIEDIT LAGI.
 
-  const notConfigured = RELEASE_BASE.indexOf("USERNAME") >= 0;
+     Kalau halaman ini dibuka di  https://<user>.github.io/<repo>/
+     maka <user> dan <repo> diambil langsung dari alamat itu, sehingga
+     semua tombol unduhan menunjuk ke Release milik repo yang benar —
+     walaupun nama repo-nya bukan "AzurePet" (misalnya "Test").
+     Saat dibuka dari komputer (file://), dipakai cadangan di bawah.
+     ============================================================ */
+  const FALLBACK_USER = "MatahariZzz";
+  const FALLBACK_REPO = "AzurePet";
+
+  let GH_USER = FALLBACK_USER, GH_REPO = FALLBACK_REPO;
+  (function () {
+    try {
+      const host = location.hostname;                                // mataharizzz.github.io
+      const seg  = location.pathname.split("/").filter(Boolean);     // ["Test", "index.html"]
+      if (/\.github\.io$/i.test(host)) {
+        GH_USER = host.split(".")[0] || FALLBACK_USER;
+        GH_REPO = seg.length ? seg[0] : GH_USER + ".github.io";      // situs <user>.github.io
+      } else if (/^(www\.)?github\.com$/i.test(host) && seg.length >= 2) {
+        GH_USER = seg[0]; GH_REPO = seg[1];                          // dibuka lewat pratinjau github.com
+      }
+    } catch (e) {}
+  })();
+
+  const REPO_URL     = "https://github.com/" + GH_USER + "/" + GH_REPO;
+  const RELEASES_URL = REPO_URL + "/releases";
+  const RELEASE_BASE = REPO_URL + "/releases/latest/download/";      // selalu rilis terbaru
+  const notConfigured = !GH_USER || !GH_REPO;
+
   document.getElementById("ghLink").href = REPO_URL;
   document.getElementById("ghLink2").href = REPO_URL;
   document.getElementById("allRel").href = RELEASES_URL;
   document.getElementById("relLink2").href = RELEASES_URL;
+  document.title = "AzurePet — Unduh untuk macOS, Windows, Linux";
 
   // ---- deteksi sistem operasi ----
   const ua = navigator.userAgent;
@@ -507,14 +533,17 @@
     clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 7000);
   }
   document.querySelectorAll(".dl").forEach(a => {
+    const asset = a.dataset.asset;
+    a.href = RELEASE_BASE + asset;          // sudah benar sejak halaman dibuka
+    a.target = "_blank";                    // unduhan / 404 tidak menghilangkan halaman ini
+    a.rel = "noopener";
     a.addEventListener("click", e => {
-      const asset = a.dataset.asset;
       if (notConfigured) {
         e.preventDefault();
-        toast("Tautan unduhan belum diatur. Buka <code>index.html</code> dan ganti <code>USERNAME</code> pada baris <code>RELEASE_BASE</code> dengan username GitHub kamu.<br>File yang dicari: <code>" + asset + "</code>");
+        toast("Alamat repo belum terdeteksi. Pastikan halaman dibuka dari alamat <code>github.io</code>.<br>File yang dicari: <code>" + asset + "</code>");
         return;
       }
-      a.href = RELEASE_BASE + asset;
+      toast("Menyiapkan unduhan <code>" + asset + "</code>…<br>Kalau yang terbuka halaman <b>404</b>, artinya file itu belum ada di rilis. Buka <a href=\"" + RELEASES_URL + "\" target=\"_blank\" rel=\"noopener\" style=\"color:#fff;text-decoration:underline\">tab Releases</a> untuk melihat isi rilis.");
     });
   });
 
@@ -534,5 +563,5 @@
   document.getElementById("burger").addEventListener("click", () => nav.classList.toggle("open"));
   document.querySelectorAll(".nav-links a").forEach(a => a.addEventListener("click", () => nav.classList.remove("open")));
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5e413b5ad295682',t:'MTc5NTMxMDA2Mg=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5e413b5ad295682',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5e56e6adf71d210',t:'MTc5NTMyNDI2NA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5e56e6adf71d210',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
