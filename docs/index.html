@@ -1071,13 +1071,149 @@
         anak[k].forEach((r) => elList.appendChild(buatItem(Object.assign({}, r, { induk: null }), r.id, false)));
       });
 
-      elStat.textContent = akar.length + " komentar" + (jmlBalasan ? " · " + jmlBalasan + " balasan" : "");
+      jmlAkar = akar.length;
+      jmlBalasanTerakhir = jmlBalasan;
+      perbaruiStat();
     }
 
     function renderUlang() { gambar(barisTerakhir); }
 
-    function muat(flashId) {
+    let jmlAkar = 0, jmlBalasanTerakhir = 0;
+    function perbaruiStat() {
+      elStat.textContent = jmlAkar + " komentar"
+        + (jmlBalasanTerakhir ? " · " + jmlBalasanTerakhir + " balasan" : "")
+        + (langsung ? " · langsung" : "");
+    }
+
+    /* ============================================================
+       PEMBARUAN LANGSUNG (Supabase Realtime)
+       Komentar baru, balasan, suntingan, dan penghapusan langsung
+       muncul/hilang di layar semua pengunjung lain tanpa memuat ulang.
+       Kalau websocket gagal, otomatis mundur ke pemeriksaan berkala.
+       ============================================================ */
+    let langsung = false;
+    let timerMuat = null;
+    let timerPeriksa = null;
+
+    function tandaiLangsung(nyala) {
+      if (langsung === nyala) return;
+      langsung = nyala;
+      perbaruiStat();                      /* cukup tulisannya, daftar tidak digambar ulang */
+    }
+
+    function jadwalMuat(diam) {
+      clearTimeout(timerMuat);
+      timerMuat = setTimeout(() => {
+        if (ubah) return;                  /* jangan hapus kotak sunting yang sedang dipakai */
+        muat(null, diam !== false);
+      }, 400);
+    }
+
+    /* pemeriksaan ringan: hanya mengambil daftar id (beberapa byte),
+       dipakai kalau realtime tidak tersedia. */
+    function cekPerubahan() {
+      if (!aktif) return;
+      try { if (document.visibilityState === "hidden") return; } catch (e) {}
+      api("/rest/v1/komentar?select=id&order=id").then((rows) => {
+        const id = (Array.isArray(rows) ? rows : []).map((r) => r.id).sort((a, b) => a - b).join(",");
+        const sekarang = barisTerakhir.map((c) => c.id).sort((a, b) => a - b).join(",");
+        if (id !== sekarang) muat(null, true);
+      }).catch(() => {});
+    }
+
+    function hapusDariLayar(id) {
+      /* buang dari data lokal + layar sekaligus, supaya angka statistik ikut benar */
+      barisTerakhir = barisTerakhir.filter(
+        (c) => String(c.id) !== String(id) && String(c.induk) !== String(id));
+
+      const el = document.getElementById("cm-" + id);
+      if (el) {
+        const induk = el.parentElement;
+        el.remove();
+        if (induk && induk.classList.contains("cm-reps") && !induk.querySelector(".cm-item")) induk.remove();
+      }
+
+      jmlAkar = barisTerakhir.filter((c) => !c.induk).length;
+      jmlBalasanTerakhir = barisTerakhir.filter((c) => c.induk).length;
+      perbaruiStat();
+
+      if (!elList.querySelector(".cm-item")) kosong("Belum ada komentar. Jadilah yang pertama ✨");
+    }
+
+    function mulaiRealtime() {
+      if (!aktif || typeof WebSocket === "undefined") return;
+      const alamat = SB_URL.replace(/^http/, "ws").replace(/\/+$/, "")
+        + "/realtime/v1/websocket?apikey=" + encodeURIComponent(SB_KEY) + "&vsn=1.0.0";
+      let ws = null, ref = 0, detak = null, coba = 0, mati = false;
+
+      const kirim = (m) => { try { if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); } catch (e) {} };
+
+      function bersih() {
+        clearInterval(detak); detak = null;
+        if (ws) { try { ws.onclose = ws.onerror = ws.onmessage = null; ws.close(); } catch (e) {} }
+        ws = null;
+        tandaiLangsung(false);
+        /* mundur ke pemeriksaan berkala supaya tetap terbarui */
+        if (!timerPeriksa) timerPeriksa = setInterval(cekPerubahan, 5000);
+      }
+
+      function cobaLagi() {
+        setTimeout(() => { mati = false; sambung(); }, 300000);   /* cek ulang tiap 5 menit */
+      }
+
+      function sambung() {
+        try { ws = new WebSocket(alamat); } catch (e) { return bersih(); }
+        ws.onopen = () => {
+          kirim({
+            topic: "realtime:public:komentar",
+            event: "phx_join",
+            payload: { config: { postgres_changes: [{ event: "*", schema: "public", table: "komentar" }] } },
+            ref: String(++ref)
+          });
+        };
+        ws.onmessage = (ev) => {
+          let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+          if (m.event === "phx_reply" && m.payload && m.payload.status === "ok") {
+            coba = 0;
+            clearInterval(timerPeriksa); timerPeriksa = null;
+            tandaiLangsung(true);
+            clearInterval(detak);
+            detak = setInterval(() => kirim({ topic: "phoenix", event: "heartbeat", payload: {}, ref: String(++ref) }), 25000);
+            muat(null, true);
+            return;
+          }
+          if (m.event === "postgres_changes") {
+            const isi = m.payload && (m.payload.data || m.payload) || {};
+            const tipe = isi.type || isi.eventType;
+            const baris = isi.old_record || isi.record || {};
+            if (tipe === "DELETE" && baris.id != null) hapusDariLayar(baris.id);
+            jadwalMuat();
+            return;
+          }
+          if (m.event === "system" && m.payload && m.payload.status === "error") {
+            /* server menolak langganan (mis. tabel belum masuk publikasi realtime) */
+            mati = true;
+            bersih();
+            cobaLagi();
+            return;
+          }
+          if (m.event === "phx_error" || m.event === "phx_close") bersih();
+        };
+        ws.onerror = () => {};
+        ws.onclose = () => {
+          bersih();
+          if (mati) return;                                    /* sudah diserahkan ke mode berkala */
+          coba++;
+          setTimeout(sambung, Math.min(2000 * coba, 30000));   /* sambung ulang, jeda makin panjang */
+        };
+      }
+
+      sambung();
+    }
+
+    function muat(flashId, diam) {
       if (!aktif) { kosong("Kolom komentar belum diaktifkan oleh pemilik situs."); elStat.textContent = "nonaktif"; return; }
+      if (!diam) kosong("Memuat komentar…");
       api("/rest/v1/komentar?select=id,nama,isi,owner,diedit,dibuat,induk,balas_ke&order=dibuat.desc&limit=400")
         .then((rows) => {
           gambar(Array.isArray(rows) ? rows : []);
@@ -1185,6 +1321,7 @@
         ubah = null;
         renderUlang();
         pesan("Komentar diperbarui.", "ok");
+        muat(null, true);
       }).catch((e) => {
         tombol.disabled = false;
         const m = String(e.message || "");
@@ -1302,8 +1439,9 @@
     try { const n = localStorage.getItem(LS_NAME); if (n) elName.value = n; } catch (e) {}
     perbaruiJumlah();
     if (token) { modeOwner(true); periksaTokenTersimpan(); } else muat();
+    mulaiRealtime();
   })();
 
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5ebf4223f54ea7b',t:'MTc5NTM5MjY1NQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5ebf4223f54ea7b',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5ec2bb458277d63',t:'MTc5NTM5NDkzMQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5ec2bb458277d63',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
