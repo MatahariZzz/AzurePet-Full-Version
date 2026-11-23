@@ -27,7 +27,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pratinjau kolom komentar — AzurePet</title>
+<title>AzurePet — karakter 3D yang berjalan-jalan di desktop</title>
 <meta name="description" content="AzurePet menampilkan karakter 3D (.glb) milikmu yang berjalan-jalan di desktop. Tersedia untuk macOS (Apple Silicon & Intel), Windows (x86 & ARM), dan Linux.">
 <meta name="theme-color" content="#ffe6ee">
 <meta property="og:title" content="AzurePet — karakter 3D di desktop">
@@ -314,65 +314,6 @@
 </style>
 </head>
 <body>
-<!-- ====== HANYA UNTUK PRATINJAU: data contoh, tanpa internet ====== -->
-<script>
-(function(){
-  var M=60000, J=3600000, H=86400000, now=Date.now();
-  var DB=[
-    {id:7,dibuat:new Date(now-3*M).toISOString(),nama:"rizky",isi:"baru coba di Linux Mint, jalan mulus. makasih ya!",owner:false,diedit:false,induk:null,balas_ke:null,kunci:"kunci-rizky"},
-    {id:8,dibuat:new Date(now-2*M).toISOString(),nama:"AzurePet",isi:"Sama-sama! Kalau ada yang aneh di Linux, tulis di sini lagi ya.",owner:true,diedit:false,induk:7,balas_ke:"rizky",kunci:null},
-    {id:6,dibuat:new Date(now-40*M).toISOString(),nama:"dewi_art",isi:"Model .glb hasil Blender sendiri bisa dipakai?",owner:false,diedit:false,induk:null,balas_ke:null,kunci:"kunci-dewi"},
-    {id:9,dibuat:new Date(now-31*M).toISOString(),nama:"anton",isi:"Ikut penasaran, saya juga bikin karakter sendiri.",owner:false,diedit:false,induk:6,balas_ke:"dewi_art",kunci:"kunci-anton"},
-    {id:10,dibuat:new Date(now-28*M).toISOString(),nama:"AzurePet",isi:"Bisa banget. Idle, Walk, Drag, dan Klik dipilih sendiri dari daftar animasi di dalam file .glb-mu.",owner:true,diedit:false,induk:6,balas_ke:"dewi_art",kunci:null},
-    {id:5,dibuat:new Date(now-3*J).toISOString(),nama:"sinta",isi:"Ada rencana versi Android nggak? hehe",owner:false,diedit:false,induk:null,balas_ke:null,kunci:"kunci-sinta"},
-    {id:11,dibuat:new Date(now-2*J).toISOString(),nama:"AzurePet",isi:"Belum ada rencananya, tapi kalau ramai kenapa tidak :)",owner:true,diedit:false,induk:5,balas_ke:"sinta",kunci:null},
-    {id:4,dibuat:new Date(now-1*H).toISOString(),nama:"budi",isi:"di Windows 11 muncul peringatan SmartScreen, aman kan?",owner:false,diedit:false,induk:null,balas_ke:null,kunci:"kunci-budi"},
-    {id:12,dibuat:new Date(now-20*H).toISOString(),nama:"AzurePet",isi:"Aman. Klik More info -> Run anyway. Peringatan itu karena aplikasinya belum ditandatangani sertifikat digital berbayar.",owner:true,diedit:false,induk:4,balas_ke:"budi",kunci:null}
-  ];
-  var next=100;
-  function kePublic(c){ return {id:c.id,dibuat:c.dibuat,nama:c.nama,isi:c.isi,owner:c.owner,diedit:c.diedit,induk:c.induk,balas_ke:c.balas_ke}; }
-  function boleh(q){ return q.p_token==='owner-demo' || (q.p_kunci && (DB.find(function(c){return c.id===q.p_id;})||{}).kunci===q.p_kunci); }
-  function ok(b){ return Promise.resolve({ok:true,status:200,text:function(){return Promise.resolve(JSON.stringify(b))}}); }
-  function gagal(m){ return Promise.resolve({ok:false,status:400,text:function(){return Promise.resolve(JSON.stringify({message:m}))}}); }
-  window.fetch=function(url,opt){
-    var q=opt&&opt.body?JSON.parse(opt.body):{};
-    if(url.indexOf('rpc/kirim_komentar')>-1){
-      var own=(q.p_token==='owner-demo');
-      var row={id:next++,dibuat:new Date().toISOString(),nama:q.p_nama,isi:q.p_isi,owner:own,diedit:false,
-               induk:q.p_induk||null,balas_ke:q.p_balas_ke||null,kunci:own?null:'kunci-baru-'+next};
-      DB.unshift(row); var pub=kePublic(row); pub.kunci=row.kunci; return ok(pub);
-    }
-    if(url.indexOf('rpc/ubah_komentar')>-1){
-      var c=DB.find(function(x){return x.id===q.p_id;});
-      if(!c) return gagal('Komentar sudah tidak ada.');
-      if(c.owner){
-        if(q.p_token!=='owner-demo') return gagal('Komentar pemilik situs tidak bisa diubah.');
-      } else if(!(q.p_kunci && c.kunci===q.p_kunci)){
-        return gagal('Kamu hanya bisa mengubah komentarmu sendiri.');
-      }
-      c.isi=q.p_isi; c.diedit=true; return ok(kePublic(c));
-    }
-    if(url.indexOf('rpc/hapus_komentar')>-1){
-      if(q.p_id<0) return q.p_token==='owner-demo'?ok(true):gagal('Kunci owner salah.');
-      if(!boleh(q)) return gagal('Kamu hanya bisa menghapus komentarmu sendiri.');
-      var c2=DB.find(function(x){return x.id===q.p_id;});
-      if(c2&&c2.owner&&q.p_token!=='owner-demo') return gagal('Komentar pemilik situs tidak bisa dihapus.');
-      var buang=[q.p_id], ubah=true;
-      while(ubah){ ubah=false; DB.forEach(function(c){ if(buang.indexOf(c.induk)>-1&&buang.indexOf(c.id)<0){buang.push(c.id);ubah=true;} }); }
-      DB=DB.filter(function(c){return buang.indexOf(c.id)<0;}); return ok(true);
-    }
-    if(url.indexOf('/rest/v1/komentar')>-1){
-      return ok(DB.map(kePublic).sort(function(a,z){return new Date(z.dibuat)-new Date(a.dibuat);}));
-    }
-    return ok(null);
-  };
-  window.confirm=function(){return true;};
-  try{
-    localStorage.setItem('azurepet_nama','kamu');
-    localStorage.setItem('azurepet_kunci_komentar', JSON.stringify({"7":"kunci-rizky","4":"kunci-budi"}));
-  }catch(e){}
-})();
-</script>
 
 <header class="nav" id="nav">
   <div class="wrap nav-in">
@@ -853,13 +794,12 @@
      YANG PERLU DIISI: dua nilai di bawah (lihat PANDUAN-KOMENTAR.md).
      ============================================================ */
   (function () {
-    const SB_URL  = "https://contohpratinjau.supabase.co";   /* contoh: "https://abcdefghijklm.supabase.co" */
-    const SB_KEY  = "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";   /* contoh: "eyJhbGciOiJIUzI1NiIsInR5cCI6..." */
+    const SB_URL  = "https://iuahrxnbkeriemxzixse.supabase.co";   /* contoh: "https://abcdefghijklm.supabase.co" */
+    const SB_KEY  = "sb_publishable_huMz6SasaOvdSf59a7D5jQ_0-D8704h";   /* contoh: "eyJhbGciOiJIUzI1NiIsInR5cCI6..." */
 
     const LS_NAME  = "azurepet_nama";
     const LS_TOKEN = "azurepet_kunci_owner";   /* diingat di browser ini sampai "Keluar" */
     const LS_TIME  = "azurepet_komentar_terakhir";
-    const LS_MINE  = "azurepet_kunci_komentar";     /* { id: kunci } milik orang ini */
     const COOLDOWN = 15000;
     const CADANGAN = ["owner", "admin", "administrator", "pemilik", "moderator", "azurepet", "official"];
 
@@ -872,31 +812,21 @@
     const elStatus = $("cmStatus"), elStatusText = $("cmStatusText");
     if (!elCard) return;
 
-    const aktif = /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SB_URL.replace(/\/+$/, "")) && SB_KEY.length > 40;
+    /* SB_KEY boleh "anon public" (eyJ...) maupun "publishable key" (sb_publishable_...)
+       yang dipakai Supabase pada proyek baru. Keduanya sah untuk REST API. */
+    const aktif = /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SB_URL.replace(/\/+$/, "")) && SB_KEY.length >= 20;
     let token = "", balas = null, ubah = null, barisTerakhir = [];
 
-    function bacaJSON(kunci, cadangan) {
-      try { return JSON.parse(localStorage.getItem(kunci) || "null") || cadangan; } catch (e) { return cadangan; }
-    }
-    let milikku = bacaJSON(LS_MINE, {});
 
     /* Pengunjung baru selalu mulai sebagai ANONIM: status owner hanya
        muncul kalau kunci pernah dimasukkan di browser ini (dan masih sah). */
     try { token = localStorage.getItem(LS_TOKEN) || ""; } catch (e) {}
 
-    function simpanMilikku() {
-      const id = Object.keys(milikku);
-      if (id.length > 120) {                       /* simpan 120 terakhir saja */
-        id.slice(0, id.length - 120).forEach((k) => { delete milikku[k]; });
-      }
-      try { localStorage.setItem(LS_MINE, JSON.stringify(milikku)); } catch (e) {}
-    }
-    const punyaKunci = (id) => !!milikku[String(id)];
-    /* Ubah: komentar sendiri (punya kunci), atau komentar owner kalau kamu owner.
-       Owner TIDAK boleh mengubah komentar orang lain. */
-    const bisaUbah = (c) => punyaKunci(c.id) || (!!token && !!c.owner);
-    /* Hapus: komentar sendiri, atau apa pun kalau kamu owner. */
-    const bisaHapus = (c) => punyaKunci(c.id) || !!token;
+    /* Pengunjung hanya bisa menulis & membalas.
+       Ubah  : hanya owner, dan hanya komentarnya sendiri (berlabel OWNER).
+       Hapus : hanya owner; boleh komentar sendiri maupun orang lain. */
+    const bisaUbah = (c) => !!token && !!c.owner;
+    const bisaHapus = (c) => !!token;
 
     function esc(s) { return String(s == null ? "" : s); }
 
@@ -1221,7 +1151,6 @@
           p_balas_ke: balas ? balas.ke : null
         })
       }).then((hasil) => {
-        if (hasil && hasil.kunci && hasil.id) { milikku[String(hasil.id)] = hasil.kunci; simpanMilikku(); }
         if (elRem.checked) { try { localStorage.setItem(LS_NAME, nama); } catch (e) {} }
         try { localStorage.setItem(LS_TIME, String(Date.now())); } catch (e) {}
         elText.value = "";
@@ -1249,12 +1178,7 @@
 
       api("/rest/v1/rpc/ubah_komentar", {
         method: "POST",
-        body: JSON.stringify({
-          p_id: c.id,
-          p_isi: isi,
-          p_kunci: milikku[String(c.id)] || null,
-          p_token: token || null
-        })
+        body: JSON.stringify({ p_id: c.id, p_isi: isi, p_token: token || null })
       }).then((hasil) => {
         const i = barisTerakhir.findIndex((x) => String(x.id) === String(c.id));
         if (i > -1) { barisTerakhir[i].isi = isi; barisTerakhir[i].diedit = true; }
@@ -1277,14 +1201,9 @@
 
       api("/rest/v1/rpc/hapus_komentar", {
         method: "POST",
-        body: JSON.stringify({
-          p_id: c.id,
-          p_token: token || null,
-          p_kunci: milikku[String(c.id)] || null
-        })
+        body: JSON.stringify({ p_id: c.id, p_token: token || null })
       }).then(() => {
         pesan("Komentar dihapus.", "ok");
-        delete milikku[String(c.id)]; simpanMilikku();
         ubah = null;
         muat();
       }).catch((e) => {
@@ -1386,5 +1305,5 @@
   })();
 
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5eb475d08512567',t:'MTc5NTM4NTU3OQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5eb475d08512567',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5ebf4223f54ea7b',t:'MTc5NTM5MjY1NQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5ebf4223f54ea7b',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
