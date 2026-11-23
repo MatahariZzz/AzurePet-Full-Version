@@ -1476,7 +1476,7 @@
 
   /* terjemahan untuk teks yang sudah ada di dalam halaman */
   const TEKS_ASLI = new Map();          // simpul teks -> teks Indonesia
-  const ATR_ASLI  = new Map();          // "id|nama" -> nilai Indonesia
+  const ATR_ASLI  = new WeakMap();      // unsur -> { placeholder/title/aria-label: nilai Indonesia }
   const DIURUS_JS = ["cmList", "cmStat", "cmMsg", "cmStatusText", "cmOwnerLink",
                      "cmCount", "cmCountN", "cmRepTo", "cmModalNama", "btnTema"];
 
@@ -1501,13 +1501,18 @@
     while (jalan.nextNode()) semua.push(jalan.currentNode);
 
     semua.forEach((n) => {
+      /* kembali ke Bahasa Indonesia: pulihkan teks asli lebih dulu,
+         tanpa perlu ada kamus (bahasa "id" memang tidak punya kamus). */
+      if (!terjemahkan) {
+        if (TEKS_ASLI.has(n)) n.nodeValue = TEKS_ASLI.get(n);
+        return;
+      }
       const asli = TEKS_ASLI.has(n) ? TEKS_ASLI.get(n) : n.nodeValue;
       const kunci = asli.replace(/\s+/g, " ").trim();
       const kamus = kamusGrup("teks");
       const en = kamus ? kamus[kunci] : undefined;
       if (en === undefined || en === null) return;
       if (!TEKS_ASLI.has(n)) TEKS_ASLI.set(n, asli);
-      if (!terjemahkan) { n.nodeValue = asli; return; }
       const depan = /^\s/.test(asli) ? " " : "";
       const belakang = /\s$/.test(asli) ? " " : "";
       n.nodeValue = depan + en + belakang;
@@ -1518,13 +1523,15 @@
       ["placeholder", "aria-label", "title"].forEach((nama) => {
         const nilai = el.getAttribute(nama);
         if (!nilai) return;
-        const kunci = el.id + "|" + nama;
-        if (!ATR_ASLI.has(kunci)) ATR_ASLI.set(kunci, nilai);
-        const asli = ATR_ASLI.get(kunci);
+        let simpan = ATR_ASLI.get(el);
+        if (!simpan) { simpan = {}; ATR_ASLI.set(el, simpan); }
+        if (simpan[nama] === undefined) simpan[nama] = nilai;
+        const asli = simpan[nama];
+        if (!terjemahkan) { el.setAttribute(nama, asli); return; }
         const kamusAtribut = kamusGrup("atribut");
         const en = kamusAtribut ? kamusAtribut[asli] : undefined;
         if (en === undefined || en === null) return;
-        el.setAttribute(nama, terjemahkan ? en : asli);
+        el.setAttribute(nama, en);
       });
     });
   }
@@ -2461,5 +2468,5 @@
   })();
 
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5f3051109dfea7b',t:'MTc5NTQ2Njc0OQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5f3051109dfea7b',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5f335699d8e6cec',t:'MTc5NTQ2ODcyOQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5f335699d8e6cec',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
