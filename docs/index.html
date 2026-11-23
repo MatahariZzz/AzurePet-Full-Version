@@ -40,7 +40,7 @@
       }
       document.documentElement.setAttribute("data-tema", t);
       var b = localStorage.getItem("azurepet-bahasa");
-      document.documentElement.setAttribute("lang", b === "en" ? "en" : "id");
+      document.documentElement.setAttribute("lang", b === "en" || b === "su" ? b : "id");
     } catch (e) {
       document.documentElement.setAttribute("data-tema", "terang");
     }
@@ -542,9 +542,10 @@
       <a class="btn btn-primary" href="#unduh">Unduh</a>
     </div>
     <div class="nav-tools">
-      <div class="lang" role="group" aria-label="Bahasa / Language">
-        <button type="button" class="lang-btn on" data-bahasa="id" aria-pressed="true">ID</button>
-        <button type="button" class="lang-btn" data-bahasa="en" aria-pressed="false">EN</button>
+      <div class="lang" role="group" aria-label="Bahasa / Language / Basa">
+        <button type="button" class="lang-btn on" data-bahasa="id" aria-pressed="true" title="Bahasa Indonesia">ID</button>
+        <button type="button" class="lang-btn" data-bahasa="en" aria-pressed="false" title="English">EN</button>
+        <button type="button" class="lang-btn" data-bahasa="su" aria-pressed="false" title="Basa Sunda">SU</button>
       </div>
       <button type="button" class="tool" id="btnTema" aria-label="Mode gelap" title="Mode gelap">
         <svg class="i-bulan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5 8.5 8.5 0 1 0 20.5 14.6z"/></svg>
@@ -948,7 +949,7 @@
 
 <script>
   /* ============================================================
-     BAHASA (Indonesia / English)  +  TEMA (terang / gelap)
+     BAHASA (Indonesia / English / Basa Sunda)  +  TEMA (terang / gelap)
      ============================================================ */
   const KAMUS = {
  "teks": {
@@ -1181,18 +1182,294 @@
   "1 jam lalu": "1 hour ago",
   "Komentar ini": "This comment",
   "1 komentar": "1 comment",
-  "1 balasan": "1 reply"
+  "1 balasan": "1 reply",
+  "Masukkan kunci owner yang kamu buat di Supabase.": "Enter the owner key you created in Supabase.",
+  "Komentar tidak boleh kosong.": "The comment cannot be empty.",
+  "Menyimpan perubahan…": "Saving changes…",
+  "Kunci owner terlalu pendek.": "The owner key is too short.",
+  "Memeriksa kunci…": "Checking the key…",
+  "Username harus 2–24 karakter.": "Username must be 2–24 characters.",
+  "Komentar harus 2–600 karakter.": "Comments must be 2–600 characters.",
+  "Username itu dipakai pemilik situs.": "That username belongs to the site owner.",
+  "Komentar yang dibalas sudah tidak ada.": "The comment you replied to no longer exists.",
+  "Terlalu banyak komentar masuk. Coba lagi sebentar lagi.": "Too many comments are coming in. Try again in a moment.",
+  "Hanya pemilik situs yang bisa mengubah komentar.": "Only the site owner can edit comments.",
+  "Komentar sudah tidak ada.": "That comment is gone.",
+  "Kamu hanya bisa mengubah komentar milikmu sendiri.": "You can only edit your own comments.",
+  "Hanya pemilik situs yang bisa menghapus komentar.": "Only the site owner can delete comments."
+ },
+ "su": {
+  "teks": {
+   "AzurePet — karakter 3D yang berjalan-jalan di desktop": "AzurePet — karakter 3D nu leumpang-léumpang dina desktop",
+   "Unduh": "Download",
+   "Fitur": "Fitur",
+   "Cara pasang": "Cara masang",
+   "Pertanyaan": "Pananya",
+   "Versi 1.12.0 · gratis · tanpa iklan": "Vérsi 1.12.0 · haratis · euweuh iklan",
+   "Karakter 3D kamu,": "Karakter 3D manéh,",
+   "hidup di desktop": "hirup di desktop",
+   "Muat file": "Muat file",
+   "milikmu, dan karakternya langsung berdiri, berjalan-jalan, bisa di-drag, dan bereaksi saat diklik. Banyak karakter sekaligus, masing-masing dengan animasinya sendiri.": "milik manéh, tuluy karakterna langsung nangtung, leumpang-léumpang, bisa digésér, jeung ngaréaksi mun diklik. Sababaraha karakter sakaligus, masing-masing make animasina sorangan.",
+   "Unduh untuk": "Download pikeun",
+   "komputermu": "komputerna manéh",
+   "Lihat fiturnya": "Tempo fiturna",
+   "Tersedia untuk macOS, Windows, dan Linux.": "Aya pikeun macOS, Windows, jeung Linux.",
+   "Unduh AzurePet": "Download AzurePet",
+   "Pilih sesuai sistem operasi dan jenis prosesor komputermu.": "Pilih nurutkeun sistem operasi jeung jenis prosesor komputerna manéh.",
+   "macOS 10.15 Catalina ke atas": "macOS 10.15 Catalina ka luhur",
+   "prosesor Intel · .dmg": "prosesor Intel · .dmg",
+   "Windows 32-bit · juga jalan di 64-bit · .exe": "Windows 32-bit · ogé jalan dina 64-bit · .exe",
+   "Windows 64-bit · versi tercepat · .exe": "Windows 64-bit · vérsi panggancangna · .exe",
+   "64-bit · pilih sesuai distro & cara pemasangan": "64-bit · pilih nurutkeun distro & cara masangna",
+   "Paket resmi Arch": "Pakét resmi Arch",
+   "dipasang ke sistem · .pkg.tar.zst": "dipasang kana sistem · .pkg.tar.zst",
+   "tanpa pasang, klik dua kali · juga untuk Fedora/openSUSE": "teu kudu dipasang, klik dua kali · ogé pikeun Fedora/openSUSE",
+   "Belum ditandatangani secara digital.": "Can ditandatanganan sacara digital.",
+   "Windows akan menampilkan “Windows protected your PC” dan macOS akan menolak membuka aplikasinya pada percobaan pertama. Ini normal untuk aplikasi gratis tanpa sertifikat berbayar — caranya ada di bagian": "Windows bakal némbongkeun “Windows protected your PC” jeung macOS bakal nolak muka aplikasina dina percobaan kahiji. Ieu wajar pikeun aplikasi haratis nu teu boga sertifikat bayar — carana aya di bagian",
+   ". Kode sumbernya terbuka di GitHub.": ". Kode sumberna kabuka di GitHub.",
+   "Lihat semua rilis & catatan versi →": "Tempo kabéh rilis & catetan vérsi →",
+   "Yang bisa dilakukan AzurePet": "Naon waé nu bisa dilakukeun ku AzurePet",
+   "Sederhana di permukaan, tapi cukup dalam untuk model 3D buatanmu sendiri.": "Sederhana dina panempoan, tapi cukup jero pikeun modél 3D jieunan manéh.",
+   "Model .glb milikmu": "Modél .glb manéh",
+   "Format glTF binary maupun .gltf. Bisa beberapa file sekaligus, maksimal 12 karakter bersamaan.": "Format glTF binary atawa .gltf. Bisa sababaraha file sakaligus, paling loba 12 karakter babarengan.",
+   "4 animasi per karakter": "4 animasi per karakter",
+   "Saat diam, saat jalan, saat di-drag, dan saat diklik — pilih sendiri dari animasi yang ada di file modelmu.": "Cicing, leumpang, digésér, jeung diklik — pilih sorangan tina animasi nu aya dina file modélna.",
+   "Klik, drag, bereaksi": "Klik, gésér, ngaréaksi",
+   "Klik kiri memutar animasi khusus. Tahan dan geser untuk memindahkan. Klik kanan membuka menu.": "Klik kénca muterkeun animasi husus. Tahan jeung gésér pikeun mindahkeun. Klik katuhu muka ménu.",
+   "Tetap ringan": "Tetep énténg",
+   "30 fps saat bergerak, 20 fps saat diam, dan render benar-benar berhenti ketika karakter disembunyikan.": "30 fps mun obah, 20 fps mun cicing, jeung rendering eureun sagemblengna mun karakterna disumputkeun.",
+   "Selalu di atas": "Sok nangkring di luhur",
+   "Karakter tidak tertutup jendela lain, dan di macOS tetap muncul walaupun ada aplikasi fullscreen.": "Karakterna teu katutup jandéla séjén, jeung di macOS tetep némbong sanajan aya aplikasi fullscreen.",
+   "Jalan otomatis": "Leumpang sorangan",
+   "Atur ukuran, kecepatan, arah hadap, dan area jalan. Bisa juga jalan sendiri saat komputer baru menyala.": "Atur ukuran, laju, arah nyanghareup, jeung area leumpangna. Bisa ogé leumpang sorangan mun komputer kakara hurung.",
+   "Tanpa terminal. Cukup klik-klik seperti aplikasi biasa.": "Teu kudu make terminal. Cukup klik-klik saperti aplikasi biasana.",
+   "Buka file": "Buka file",
+   "yang sudah diunduh.": "nu geus diunduh.",
+   "Klik kanan": "Klik katuhu",
+   "ikon": "ikon",
+   "di jendela itu, pilih": "dina éta jandéla, pilih",
+   ", lalu": ", tuluy",
+   "lagi. (Jangan klik dua kali biasa — macOS akan menolak karena aplikasinya belum bersertifikat Apple.)": "deui. (Ulah klik dua kali biasa — macOS bakal nolak sabab aplikasina can boga sertifikat Apple.)",
+   "Setelah terbuka sekali, AzurePet menyalin dirinya ke folder": "Sanggeus kabuka sakali, AzurePet nyalin soranganana ka polder",
+   "dan terbuka lagi dari sana. File": "jeung muka deui ti dinya. File",
+   "boleh dihapus, aplikasinya tetap ada.": "meunang dipiceun, aplikasina tetep aya.",
+   "Berikutnya, buka lewat": "Satuluyna, buka ngaliwatan",
+   "atau": "atawa",
+   "Spasi": "Spasi",
+   ", ketik “AzurePet”).": ", ketik “AzurePet”).",
+   "Kalau macOS 15 ke atas tidak menampilkan tombol Open: buka": "Mun macOS 15 ka luhur teu némbongkeun tombol Open: buka",
+   ", gulir ke bawah, klik": ", gulung ka handap, klik",
+   "Pilih": "Pilih",
+   "untuk Mac M1/M2/M3/M4, atau": "pikeun Mac M1/M2/M3/M4, atawa",
+   "untuk Mac prosesor Intel. Ragu? Buka": "pikeun Mac prosesor Intel. Ragu? Buka",
+   "→ About This Mac, lihat baris “Chip” atau “Processor”.": "→ About This Mac, tempo baris “Chip” atawa “Processor”.",
+   "Jalankan file": "Jalankeun file",
+   "Kalau muncul": "Mun muncul",
+   ", klik": ", klik",
+   "lalu": "tuluy",
+   "Installer memasang AzurePet untuk pengguna kamu sendiri — tidak butuh hak administrator.": "Installer masang AzurePet pikeun akun manéh sorangan — teu butuh hak administrator.",
+   "Setelah selesai: shortcut ada di": "Sanggeus beres: shortcutna aya di",
+   ", dan aplikasinya bisa dicari di menu Start dengan kata kunci": ", jeung aplikasina bisa dipilari dina ménu Start ku kecap",
+   "Ragu pilih yang mana? Buka": "Ragu rék milih nu mana? Buka",
+   ", lihat baris": ", tempo baris",
+   ": kalau tertulis “64-bit operating system, x64-based processor” pakai": ": mun ditulis “64-bit operating system, x64-based processor” make",
+   "; kalau “32-bit” pakai": "; mun “32-bit” make",
+   ". Installer 32-bit tetap bisa dipasang di Windows 64-bit, tapi versi 64-bit lebih ringan. Pakai": ". Installer 32-bit masih bisa dipasang dina Windows 64-bit, tapi vérsi 64-bit leuwih énténg. Make",
+   "hanya kalau perangkatmu ARM (Surface, Snapdragon).": "mun perangkatna ARM (Surface, Snapdragon) hungkul.",
+   "Klik dua kali file": "Klik dua kali file",
+   "Software Center / GDebi terbuka → klik": "Software Center / GDebi bakal kabuka → klik",
+   "→ masukkan password.": "→ asupkeun password.",
+   "Cari": "Pilari",
+   "di menu aplikasi.": "dina ménu aplikasi.",
+   "Butuh compositor aktif (GNOME, KDE, Cinnamon, dan Mint sudah aktif sejak awal) supaya latar karakter transparan.": "Butuh compositor hurung (GNOME, KDE, Cinnamon, jeung Mint geus hurung ti awal) sangkan latar karakterna transparan.",
+   "— ada dua pilihan, pakai salah satu:": "— aya dua pilihan, make salah sahijina:",
+   "1 · Paket resmi Arch (": "1 · Pakét resmi Arch (",
+   "Pasang lewat terminal:": "Masang ngaliwatan terminal:",
+   "Atau klik dua kali file-nya lewat": "Atawa klik dua kali file-na ngaliwatan",
+   "(“Tambahkan/Instal Paket Lokal”).": "(“Tambahkan/Instal Paket Lokal”).",
+   "Setelah itu": "Sanggeus kitu",
+   "muncul di menu aplikasi dan bisa dihapus lewat pacman/Pamac.": "bakal muncul dina ménu aplikasi jeung bisa dipiceun ngaliwatan pacman/Pamac.",
+   "2 · AppImage (tanpa memasang apa pun)": "2 · AppImage (teu masang naon-naon)",
+   "Klik kanan →": "Klik katuhu →",
+   "→ tab": "→ tab",
+   "→ centang": "→ centang",
+   "Klik dua kali → AzurePet langsung jalan. Tidak ada yang masuk ke sistem, tidak butuh sudo.": "Klik dua kali → AzurePet langsung jalan. Euweuh nu asup kana sistem, teu butuh sudo.",
+   "Kalau muncul pesan soal FUSE:": "Mun muncul pesen ngeunaan FUSE:",
+   "Ingin ikonnya masuk menu aplikasi? Pasang": "Hayang ikonna asup ménu aplikasi? Pasang",
+   ", lalu buka AppImage-nya sekali.": ", tuluy buka AppImage-na sakali.",
+   "— pakai AppImage di atas; file yang sama jalan di distro apa pun.": "— make AppImage di luhur; file nu sarua jalan di distro naon waé.",
+   "Setelah terpasang": "Sanggeus kapasang",
+   "Buka aplikasinya, lalu:": "Buka aplikasina, tuluy:",
+   "Klik": "Klik",
+   "+ Tambah karakter (.glb)...": "+ Tambah karakter (.glb)...",
+   "dan pilih file model 3D milikmu (bisa juga diseret ke jendela pengaturan).": "jeung pilih file modél 3D manéh (bisa ogé diséred waé ka jandéla setélan).",
+   "Pilih animasi untuk": "Pilih animasi pikeun",
+   "diam": "cicing",
+   "jalan": "leumpang",
+   "di-drag": "digésér",
+   ", dan": ", jeung",
+   "diklik": "diklik",
+   "Atur ukuran, kecepatan, dan area jalan. Selesai — karakternya langsung hidup di desktop.": "Atur ukuran, laju, jeung area leumpangna. Beres — karakterna langsung hirup di desktop.",
+   "Pertanyaan yang sering muncul": "Pananya nu mindeng muncul",
+   "Apakah model 3D-nya disertakan?": "Modél 3D-na kaasup teu?",
+   "Tidak. AzurePet tidak membawa model bawaan — kamu memakai file": "Henteu. AzurePet teu mawa modél bawaan — manéh make file",
+   "milikmu sendiri. Animasi yang muncul di daftar juga otomatis diambil dari file model itu.": "milik manéh sorangan. Animasi nu muncul dina daptar ogé otomatis dicokot tina éta file modél.",
+   "Kenapa Windows / macOS memberi peringatan saat pertama dijalankan?": "Naha Windows / macOS méré peringatan mun kahiji dijalankeun?",
+   "Karena aplikasinya belum ditandatangani dengan sertifikat digital berbayar (Windows code signing dan Apple Developer Program). Peringatan itu soal identitas pembuat, bukan virus. Klik": "Sabab aplikasina can ditandatanganan ku sertifikat digital bayar (Windows code signing jeung Apple Developer Program). Éta peringatan mah soal identitas nu nyieunna, lain virus. Klik",
+   "di Windows, atau": "dina Windows, atawa",
+   "klik kanan → Open": "klik katuhu → Open",
+   "di macOS.": "dina macOS.",
+   "Bedanya installer Windows 32-bit dan 64-bit apa?": "Béda installer Windows 32-bit jeung 64-bit naon?",
+   "Isinya aplikasi yang sama, bedanya mesin Electron yang dipakai. Yang": "Eusina aplikasi nu sarua, bédana mesin Electron nu dipaké. Nu",
+   "lebih ringan dan lebih cepat karena memakai arsitektur prosesor 64-bit secara penuh. Yang": "leuwih énténg jeung leuwih gancang sabab make arsitéktur prosesor 64-bit sapinuhna. Nu",
+   "bisa dipasang di Windows 32-bit maupun 64-bit, jadi pilih ini kalau kamu tidak yakin. Kalau Windows-mu ARM (Surface, Snapdragon), pakai yang": "bisa dipasang di Windows 32-bit atawa 64-bit, jadi pilih ieu mun teu yakin. Mun Windows-na ARM (Surface, Snapdragon), make nu",
+   "Apakah aplikasi ini butuh internet?": "Ieu aplikasi butuh internét teu?",
+   "Tidak sama sekali. Tidak ada koneksi ke server mana pun, tidak ada akun, tidak ada iklan. Model dan pengaturan hanya tersimpan di komputermu sendiri.": "Henteu pisan. Euweuh sambungan ka server naon waé, euweuh akun, euweuh iklan. Modél jeung setélan ngan disimpen dina komputerna manéh.",
+   "Berapa banyak karakter yang bisa dipakai sekaligus?": "Sabaraha karakter nu bisa dipaké sakaligus?",
+   "Maksimal 12. Setiap karakter berjalan sebagai jendela sendiri, jadi makin banyak karakter makin banyak pemakaian RAM. Dua sampai empat karakter biasanya paling nyaman.": "Paling loba 12. Unggal karakter jalan minangka jandéla sorangan, jadi beuki loba karakter beuki loba RAM nu dipaké. Dua nepi ka opat karakter biasana pangnyamanna.",
+   "Karakter tidak muncul, atau jendelanya hitam. Kenapa?": "Karakterna teu muncul, atawa jandélana hideung. Naha?",
+   "Biasanya driver kartu grafis. Coba perbarui driver VGA. Di dalam Remote Desktop, efek jendela transparan umumnya tidak jalan. Di Linux, pastikan compositor aktif.": "Biasana driver kartu grafis. Coba apdet driver VGA. Dina Remote Desktop, éfék jandéla transparan biasana teu jalan. Dina Linux, pastikeun compositor-na hurung.",
+   "Cara menghapus aplikasinya?": "Cara miceun aplikasina?",
+   "Windows: Settings → Apps → Installed apps → AzurePet → Uninstall. macOS: seret AzurePet dari folder Applications ke Trash. Linux Debian:": "Windows: Settings → Apps → Installed apps → AzurePet → Uninstall. macOS: séred AzurePet tina polder Applications ka Trash. Linux Debian:",
+   "atau lewat Software Center. Linux Arch:": "atawa ngaliwatan Software Center. Linux Arch:",
+   ". AppImage: cukup hapus file": ". AppImage: cukup piceun file",
+   "-nya (tidak ada yang tertinggal di sistem). File": "-na (euweuh nu tinggal dina sistem). File",
+   "milikmu tidak ikut terhapus.": "milik manéh teu milu kapiceun.",
+   "v1.12.0 · dibuat dengan Electron + three.js": "v1.12.0 · dijieun maké Electron + three.js",
+   "Rilis": "Rilis",
+   "Komentar & masukan": "Komentar & bongbolongan",
+   "Tidak perlu akun, tidak perlu email. Pilih username dulu, lalu tulis apa saja.": "Teu kudu akun, teu kudu email. Pilih username heula, tuluy tulis naon waé.",
+   "Membalas": "Ngabales",
+   "Batal": "Bolaykeun",
+   "Anonim — komentar darimu tampil sebagai": "Anonim — komentar ti manéh tampil minangka",
+   "Ingat username saya": "Inget username abdi",
+   "Kirim komentar": "Kirim komentar",
+   "Masuk": "Asup",
+   "Memuat komentar…": "Keur ngamuat komentar…",
+   "Masuk sebagai owner": "Asup salaku owner",
+   "Hapus komentar ini?": "Piceun ieu komentar?",
+   "Komentar dari": "Komentar ti",
+   "pengunjung ini": "nu ngadatangan ieu",
+   "akan hilang dari layar semua pengunjung, dan balasan di bawahnya ikut terhapus. Tidak bisa dikembalikan.": "bakal leungit tina layar kabéh nu ngadatangan, jeung balesan di handapna milu kapiceun. Teu bisa dibalikkeun.",
+   "Ya, hapus": "Muhun, piceun",
+   "Komentar": "Komentar",
+   "Distro lain (Fedora, openSUSE, Void, …)": "Distro séjén (Fedora, openSUSE, Void, …)",
+   "Menyiapkan unduhan": "Keur nyiapkeun unduhan"
+  },
+  "atribut": {
+   "Mode gelap": "Mode poék",
+   "Mode terang": "Mode caang",
+   "Username kamu": "Username manéh",
+   "Tulis komentar, saran, atau laporan bug…": "Tulis komentar, saran, atawa laporan bug…",
+   "Kunci owner": "Kunci owner",
+   "Komentar": "Komentar",
+   "Menu": "Ménu",
+   "Bahasa / Language": "Basa / Language",
+   "Tutup": "Tutup"
+  },
+  "dinamis": {
+   "judul": "AzurePet — download pikeun macOS, Windows, Linux",
+   "deskripsi": "AzurePet némbongkeun karakter 3D (.glb) manéh nu leumpang-léumpang dina desktop. Aya pikeun macOS (Apple Silicon & Intel), Windows (x86 & ARM), jeung Linux.",
+   "Terdeteksi {os} — pilih jenis prosesor di bagian Unduh.": "Kadeteksi {os} — pilih jenis prosesor dina bagian Download.",
+   "Cocok untuk perangkat kamu": "Cocok pikeun perangkatna manéh"
+  },
+  "komentar": {
+   "Belum ada komentar. Jadilah yang pertama ✨": "Can aya komentar. Jadi nu kahiji ✨",
+   "Kolom komentar belum diaktifkan oleh pemilik situs.": "Kolom komentar can diaktipkeun ku nu boga situs.",
+   "Komentar gagal dimuat. Coba muat ulang halaman ini.": "Komentar gagal dimuat. Coba muat ulang ieu halaman.",
+   "Gagal memuat komentar: ": "Gagal ngamuat komentar: ",
+   "Balas": "Bales",
+   "Ubah": "Robah",
+   "Hapus": "Piceun",
+   "Simpan": "Simpen",
+   "Batal": "Bolaykeun",
+   "Keluar": "Kaluar",
+   "Keluar dari mode owner": "Kaluar tina mode owner",
+   "Masuk sebagai owner": "Asup salaku owner",
+   "Mode owner — komentar darimu berlencana <b>OWNER</b>.": "Mode owner — komentar ti manéh dilencanana <b>OWNER</b>.",
+   "Anonim — komentar darimu tampil sebagai <b></b>.": "Anonim — komentar ti manéh tampil minangka <b></b>.",
+   "Anonim — pilih username dulu sebelum menulis.": "Anonim — pilih username heula saméméh nulis.",
+   "Ditulis oleh pemilik AzurePet": "Ditulis ku nu boga AzurePet",
+   "Komentar ini pernah diubah penulisnya": "Ieu komentar kungsi dirobah ku nu nulisna",
+   "· diedit": "· dirobah",
+   "↳ membalas <b></b>": "↳ ngabales <b></b>",
+   "· langsung": "· langsung",
+   "komentar": "komentar",
+   "balasan": "balesan",
+   "nonaktif": "nonaktif",
+   "gagal memuat": "gagal ngamuat",
+   "Pilih username dulu (minimal 2 huruf).": "Pilih username heula (sahenteuna 2 aksara).",
+   "Username maksimal 24 huruf.": "Username paling loba 24 aksara.",
+   "Username itu dipakai pemilik situs. Pilih nama lain ya.": "Éta username dipaké ku nu boga situs. Pilih ngaran séjén nya.",
+   "Tulis dulu balasanmu.": "Tulis heula balesan manéh.",
+   "Komentarnya masih kosong.": "Komentarna can dieusian.",
+   "Komentar maksimal 600 huruf.": "Komentar paling loba 600 aksara.",
+   "Sabar sebentar — coba lagi dalam ": "Sabar sakedap — cobian deui dina ",
+   " detik.": " detik.",
+   "Mengirim balasan…": "Keur ngirim balesan…",
+   "Mengirim komentar…": "Keur ngirim komentar…",
+   "Mengirim komentar sebagai owner…": "Keur ngirim komentar salaku owner…",
+   "Balasan terkirim. Terima kasih!": "Balesan geus dikirim. Hatur nuhun!",
+   "Komentar terkirim. Terima kasih!": "Komentar geus dikirim. Hatur nuhun!",
+   "Tidak bisa menghubungi server komentar. Periksa koneksi internetmu.": "Teu bisa nyambung ka server komentar. Pariksa sambungan internét manéh.",
+   "Komentar dihapus.": "Komentar dipiceun.",
+   "Komentar diperbarui.": "Komentar dirobah.",
+   "Gagal menghapus: ": "Gagal miceun: ",
+   "Gagal menyimpan: ": "Gagal nyimpen: ",
+   "Gagal mengirim: ": "Gagal ngirim: ",
+   "Gagal memeriksa kunci: ": "Gagal mariksa kunci: ",
+   "Kunci owner salah.": "Kunci owner salah.",
+   "Kunci owner yang tersimpan sudah tidak berlaku. Silakan masuk lagi.": "Kunci owner nu disimpen geus teu lumaku. Mangga asup deui.",
+   "Mode owner aktif — kamu bisa menghapus komentar siapa saja, dan mengubah komentar sendiri.": "Mode owner hurung — manéh bisa miceun komentar saha waé, jeung ngarobah komentar sorangan.",
+   "baru saja": "kakara waé",
+   " menit lalu": " menit ka tukang",
+   " jam lalu": " jam ka tukang",
+   " hari lalu": " poé ka tukang",
+   "1 menit lalu": "1 menit ka tukang",
+   "1 jam lalu": "1 jam ka tukang",
+   "Komentar ini": "Ieu komentar",
+   "1 komentar": "1 komentar",
+   "1 balasan": "1 balesan",
+   "Masukkan kunci owner yang kamu buat di Supabase.": "Asupkeun kunci owner nu dijieun ku manéh di Supabase.",
+   "Komentar tidak boleh kosong.": "Komentar teu meunang kosong.",
+   "Menyimpan perubahan…": "Keur nyimpen parobahan…",
+   "Kunci owner terlalu pendek.": "Kunci owner pondok teuing.",
+   "Memeriksa kunci…": "Keur mariksa kunci…",
+   "Username harus 2–24 karakter.": "Username kudu 2–24 aksara.",
+   "Komentar harus 2–600 karakter.": "Komentar kudu 2–600 aksara.",
+   "Username itu dipakai pemilik situs.": "Éta username dipaké ku nu boga situs.",
+   "Komentar yang dibalas sudah tidak ada.": "Komentar nu dibales geus teu aya.",
+   "Terlalu banyak komentar masuk. Coba lagi sebentar lagi.": "Loba teuing komentar nu asup. Cobian deui sakedap deui.",
+   "Hanya pemilik situs yang bisa mengubah komentar.": "Ngan nu boga situs nu bisa ngarobah komentar.",
+   "Komentar sudah tidak ada.": "Komentarna geus teu aya.",
+   "Kamu hanya bisa mengubah komentar milikmu sendiri.": "Manéh ngan bisa ngarobah komentar manéh sorangan.",
+   "Hanya pemilik situs yang bisa menghapus komentar.": "Ngan nu boga situs nu bisa miceun komentar."
+  }
  }
 };
 
-  let BAHASA = document.documentElement.getAttribute("lang") === "en" ? "en" : "id";
+  const BAHASA_ADA = ["id", "en", "su"];
+  const normalkanBahasa = (b) => (BAHASA_ADA.indexOf(b) !== -1 ? b : "id");
+
+  let BAHASA = normalkanBahasa(document.documentElement.getAttribute("lang"));
+
+  /* kamus untuk bahasa aktif.
+     Grup rata (KAMUS.teks, ...) berisi terjemahan English;
+     KAMUS.su.teks, ... berisi terjemahan Basa Sunda.
+     Untuk "id" dipakai teks asli halaman. */
+  function kamusGrup(grup) {
+    if (BAHASA === "id") return null;
+    if (BAHASA === "su") return (KAMUS.su && KAMUS.su[grup]) || null;
+    return KAMUS[grup] || null;
+  }
 
   /* terjemahan untuk teks yang dibuat oleh JavaScript */
   function t(teks) {
-    if (BAHASA !== "en" || !teks) return teks;
+    if (BAHASA === "id" || !teks) return teks;
     for (const grup of ["komentar", "teks", "atribut", "dinamis"]) {
-      const k = KAMUS[grup] && KAMUS[grup][teks];
-      if (k !== undefined) return k;
+      const kamus = kamusGrup(grup);
+      const k = kamus ? kamus[teks] : undefined;
+      if (k !== undefined && k !== null) return k;
     }
     return teks;
   }
@@ -1210,7 +1487,7 @@
     return false;
   }
 
-  function pasangTeksHalaman(keInggris) {
+  function pasangTeksHalaman(terjemahkan) {
     const jalan = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
       acceptNode(n) {
         const tag = n.parentElement ? n.parentElement.tagName : "";
@@ -1226,10 +1503,11 @@
     semua.forEach((n) => {
       const asli = TEKS_ASLI.has(n) ? TEKS_ASLI.get(n) : n.nodeValue;
       const kunci = asli.replace(/\s+/g, " ").trim();
-      const en = KAMUS.teks[kunci];
-      if (en === undefined) return;
+      const kamus = kamusGrup("teks");
+      const en = kamus ? kamus[kunci] : undefined;
+      if (en === undefined || en === null) return;
       if (!TEKS_ASLI.has(n)) TEKS_ASLI.set(n, asli);
-      if (!keInggris) { n.nodeValue = asli; return; }
+      if (!terjemahkan) { n.nodeValue = asli; return; }
       const depan = /^\s/.test(asli) ? " " : "";
       const belakang = /\s$/.test(asli) ? " " : "";
       n.nodeValue = depan + en + belakang;
@@ -1243,9 +1521,10 @@
         const kunci = el.id + "|" + nama;
         if (!ATR_ASLI.has(kunci)) ATR_ASLI.set(kunci, nilai);
         const asli = ATR_ASLI.get(kunci);
-        const en = KAMUS.atribut[asli];
-        if (en === undefined) return;
-        el.setAttribute(nama, keInggris ? en : asli);
+        const kamusAtribut = kamusGrup("atribut");
+        const en = kamusAtribut ? kamusAtribut[asli] : undefined;
+        if (en === undefined || en === null) return;
+        el.setAttribute(nama, terjemahkan ? en : asli);
       });
     });
   }
@@ -1268,11 +1547,23 @@
 
   function perbaruiTeksHalaman() {
     document.documentElement.setAttribute("lang", BAHASA);
-    document.title = BAHASA === "en" ? KAMUS.dinamis.judul : "AzurePet — karakter 3D yang berjalan-jalan di desktop";
+    const JUDUL = {
+      id: "AzurePet — karakter 3D yang berjalan-jalan di desktop",
+      en: "AzurePet — 3D characters that live on your desktop",
+      su: "AzurePet — karakter 3D nu leumpang-léumpang dina desktop"
+    };
+    const DESKRIPSI = {
+      id: "AzurePet menampilkan karakter 3D (.glb) milikmu yang berjalan-jalan di desktop. Tersedia untuk macOS (Apple Silicon & Intel), Windows (x86 & ARM), dan Linux.",
+      en: "AzurePet brings your own 3D characters (.glb) to life on your desktop. Available for macOS (Apple Silicon & Intel), Windows (x86 & ARM), and Linux.",
+      su: "AzurePet némbongkeun karakter 3D (.glb) manéh nu leumpang-léumpang dina desktop. Aya pikeun macOS (Apple Silicon & Intel), Windows (x86 & ARM), jeung Linux."
+    };
+    const dm = KAMUS.dinamis || {};                     // English
+    const dmSu = (KAMUS.su && KAMUS.su.dinamis) || {};  // Basa Sunda
+    const dinamisAktif = BAHASA === "su" ? dmSu : dm;
+    document.title = BAHASA === "id" ? JUDUL.id : (dinamisAktif.judul || JUDUL[BAHASA] || JUDUL.id);
     const d = document.querySelector('meta[name="description"]');
-    if (d) d.content = BAHASA === "en" ? KAMUS.dinamis.deskripsi
-      : "AzurePet menampilkan karakter 3D (.glb) milikmu yang berjalan-jalan di desktop. Tersedia untuk macOS (Apple Silicon & Intel), Windows (x86 & ARM), dan Linux.";
-    pasangTeksHalaman(BAHASA === "en");
+    if (d) d.content = BAHASA === "id" ? DESKRIPSI.id : (dinamisAktif.deskripsi || DESKRIPSI[BAHASA] || DESKRIPSI.id);
+    pasangTeksHalaman(BAHASA !== "id");
     perbaruiLabelTema();
     perbaruiLabelNotif();
     document.querySelectorAll(".lang-btn").forEach((b) => {
@@ -1283,7 +1574,7 @@
   }
 
   function pakaiBahasa(bahasa, simpan) {
-    BAHASA = bahasa === "en" ? "en" : "id";
+    BAHASA = normalkanBahasa(bahasa);
     if (simpan) { try { localStorage.setItem("azurepet-bahasa", BAHASA); } catch (e) {} }
     perbaruiTeksHalaman();
     if (typeof perbaruiTeksOs === "function") perbaruiTeksOs();
@@ -1422,7 +1713,7 @@
   });
   pakaiTema(document.documentElement.getAttribute("data-tema") || "terang", false);
   perbaruiTeksHalaman();
-  if (BAHASA === "en" && os) perbaruiTeksOs();
+  if (BAHASA !== "id" && os) perbaruiTeksOs();
 
   
   /* ============================================================
@@ -1954,7 +2245,7 @@
         muat(hasil && hasil.id ? hasil.id : null);
       }).catch((e) => {
         const m = String(e.message || "");
-        if (/Terlalu|harus|dipakai/i.test(m)) pesan(m, "err");
+        if (/Terlalu|harus|dipakai/i.test(m)) pesan(T(m), "err");
         else if (/fetch|network|Failed/i.test(m)) pesan(T("Tidak bisa menghubungi server komentar. Periksa koneksi internetmu."), "err");
         else pesan(T("Gagal mengirim: ") + m, "err");
       }).then(() => { elSend.disabled = false; });
@@ -1963,11 +2254,11 @@
     /* ---------- ubah ---------- */
     function simpanUbah(c, ta, tombol) {
       const isi = ta.value.trim();
-      if (isi.length < 2) { pesan("Komentar tidak boleh kosong.", "err"); ta.focus(); return; }
-      if (isi.length > 600) { pesan("Komentar maksimal 600 huruf.", "err"); return; }
+      if (isi.length < 2) { pesan(T("Komentar tidak boleh kosong."), "err"); ta.focus(); return; }
+      if (isi.length > 600) { pesan(T("Komentar maksimal 600 huruf."), "err"); return; }
 
       tombol.disabled = true;
-      pesan("Menyimpan perubahan…");
+      pesan(T("Menyimpan perubahan…"));
 
       api("/rest/v1/rpc/ubah_komentar", {
         method: "POST",
@@ -1982,7 +2273,7 @@
       }).catch((e) => {
         tombol.disabled = false;
         const m = String(e.message || "");
-        if (/sendiri|izin|tidak berhak|kunci/i.test(m)) pesan(m, "err");
+        if (/sendiri|izin|tidak berhak|kunci/i.test(m)) pesan(T(m), "err");
         else pesan(T("Gagal menyimpan: ") + m, "err");
       });
     }
@@ -2051,7 +2342,7 @@
         }).catch((e) => {
           if (tombol) tombol.disabled = false;
           const m = String(e.message || "");
-          if (/sendiri|izin|tidak berhak|kunci/i.test(m)) pesan(m, "err");
+          if (/sendiri|izin|tidak berhak|kunci/i.test(m)) pesan(T(m), "err");
           else pesan(T("Gagal menghapus: ") + m, "err");
         });
       });
@@ -2103,15 +2394,15 @@
       }
       elOwnBox.classList.add("on");
       elToken.focus();
-      pesan("Masukkan kunci owner yang kamu buat di Supabase.");
+      pesan(T("Masukkan kunci owner yang kamu buat di Supabase."));
     });
 
     $("cmOwnCancel").addEventListener("click", () => { elOwnBox.classList.remove("on"); elToken.value = ""; pesan(""); });
 
     $("cmOwnOk").addEventListener("click", () => {
       const kunci = elToken.value.trim();
-      if (kunci.length < 8) { pesan("Kunci owner terlalu pendek.", "err"); return; }
-      pesan("Memeriksa kunci…");
+      if (kunci.length < 8) { pesan(T("Kunci owner terlalu pendek."), "err"); return; }
+      pesan(T("Memeriksa kunci…"));
       cekToken(kunci).then(() => {
         token = kunci;
         try { localStorage.setItem(LS_TOKEN, kunci); } catch (e) {}
@@ -2119,7 +2410,7 @@
         elOwnBox.classList.remove("on");
         modeOwner(true);
       }).catch((e) => {
-        pesan(/token|salah|invalid|JWT|permission/i.test(e.message) ? T("Kunci owner salah.") : T("Gagal memeriksa kunci: ") + e.message, "err");
+        pesan(/token|salah|invalid|JWT|permission/i.test(e.message) ? T("Kunci owner salah.") : T("Gagal memeriksa kunci: ") + T(e.message), "err");
       });
     });
 
@@ -2158,6 +2449,10 @@
     };
 
     /* ---------- mulai ---------- */
+    {   /* label tautan owner ikut bahasa aktif sejak halaman dibuka */
+      const tautan0 = $("cmOwnerLink");
+      if (tautan0) tautan0.textContent = token ? T("Keluar dari mode owner") : T("Masuk sebagai owner");
+    }
     try { const n = localStorage.getItem(LS_NAME); if (n) elName.value = n; } catch (e) {}
     perbaruiJumlah();
     pasangModal();
@@ -2166,5 +2461,5 @@
   })();
 
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5ee49d0bd37807d',t:'MTc5NTQxNzEzNg=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5ee49d0bd37807d',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5f3051109dfea7b',t:'MTc5NTQ2Njc0OQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5f3051109dfea7b',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
