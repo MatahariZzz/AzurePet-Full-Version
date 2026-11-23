@@ -30,6 +30,22 @@
 <title>AzurePet — karakter 3D yang berjalan-jalan di desktop</title>
 <meta name="description" content="AzurePet menampilkan karakter 3D (.glb) milikmu yang berjalan-jalan di desktop. Tersedia untuk macOS (Apple Silicon & Intel), Windows (x86 & ARM), dan Linux.">
 <meta name="theme-color" content="#ffe6ee">
+<script>
+  /* Dipasang sebelum halaman digambar supaya tidak ada kedipan warna/teks. */
+  (function () {
+    try {
+      var t = localStorage.getItem("azurepet-tema");
+      if (t !== "gelap" && t !== "terang") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "gelap" : "terang";
+      }
+      document.documentElement.setAttribute("data-tema", t);
+      var b = localStorage.getItem("azurepet-bahasa");
+      document.documentElement.setAttribute("lang", b === "en" ? "en" : "id");
+    } catch (e) {
+      document.documentElement.setAttribute("data-tema", "terang");
+    }
+  })();
+</script>
 <!-- Ikon tab browser: menempel di dalam file ini (tanpa gambar tambahan) -->
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,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">
 <link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
@@ -194,7 +210,7 @@
 
   @media (max-width:900px){
     .hero-grid{grid-template-columns:1fr; gap:26px; padding-top:8px}
-    .mock{order:-1; max-width:520px; margin:0 auto}
+    .mock{order:-1; width:100%; max-width:520px; margin:0 auto; align-self:start}
     .os-grid,.feat{grid-template-columns:1fr}
     .nav-links{display:none}
     .nav-cta{display:none}
@@ -206,6 +222,95 @@
   }
   @media (prefers-reduced-motion:reduce){ .pet{animation:none} html{scroll-behavior:auto} }
 
+  /* ---------- tombol bahasa & tema ---------- */
+  .nav-tools{display:flex; align-items:center; gap:8px; margin-left:8px}
+  .lang{display:flex; align-items:center; background:#fff; border:1px solid var(--line); border-radius:999px; padding:2px}
+  .lang-btn{border:0; background:transparent; color:var(--muted); font:inherit; font-size:12px; font-weight:800;
+    letter-spacing:.04em; padding:5px 9px; border-radius:999px; cursor:pointer; line-height:1}
+  .lang-btn.on{background:var(--pink-500); color:#fff}
+  .lang-btn:not(.on):hover{color:var(--pink-600)}
+  .tool{display:grid; place-items:center; width:34px; height:34px; border-radius:999px; cursor:pointer;
+    background:#fff; border:1px solid var(--line); color:var(--ink); padding:0}
+  .tool:hover{background:var(--pink-100); color:var(--pink-600)}
+  .tool svg{width:17px; height:17px}
+  .tool .i-matahari{display:none}
+  html[data-tema="gelap"] .tool .i-matahari{display:block}
+  html[data-tema="gelap"] .tool .i-bulan{display:none}
+  .archbtn{background:linear-gradient(180deg,#fff0f5,#ffe1ec); border-color:var(--pink-300); color:var(--pink-600)}
+  .archbtn.appimage{background:linear-gradient(180deg,#fff6fb,#ffe9f3); border-color:var(--pink-200)}
+  .archbtn:hover{filter:brightness(.985)}
+  .note-soft{color:#7c4a5e; font-size:14px}
+  .brand-ink{color:#5b2b3f}
+  .sec-alt1{background:linear-gradient(180deg,#fff8fa,#ffeef4)}
+  .sec-alt2{background:linear-gradient(180deg,#ffeff5,#fff8fa)}
+  html{color-scheme:light}
+  html[data-tema="gelap"]{color-scheme:dark}
+
+  /* ---------- TEMA GELAP ---------- */
+  html[data-tema="gelap"]{
+    --pink-50:#171015;  --pink-100:#2e2029;  --pink-150:#3a2833;  --pink-200:#422e3a;
+    --pink-300:#7a4b60; --ink:#f7e9ef;       --muted:#b99cab;
+    --card:#211823;     --line:#3b2a36;
+    --shadow:0 10px 30px -12px rgba(0,0,0,.7);
+  }
+  html[data-tema="gelap"] body{background:#171015; color:var(--ink)}
+  html[data-tema="gelap"] a{color:#f486ab}
+  html[data-tema="gelap"] .btn-ghost,
+  html[data-tema="gelap"] .pill,
+  html[data-tema="gelap"] .tab,
+  html[data-tema="gelap"] .kbd,
+  html[data-tema="gelap"] .f,
+  html[data-tema="gelap"] .panel,
+  html[data-tema="gelap"] details,
+  html[data-tema="gelap"] footer,
+  html[data-tema="gelap"] .win,
+  html[data-tema="gelap"] .lang,
+  html[data-tema="gelap"] .tool{background:#211823}
+  html[data-tema="gelap"] .btn-ghost{color:#f486ab}
+  html[data-tema="gelap"] .btn-ghost:hover,
+  html[data-tema="gelap"] .tool:hover{background:#2e2029}
+  html[data-tema="gelap"] .btn-primary{color:#2a0f1b}
+  html[data-tema="gelap"] .btn-primary .sub{color:rgba(42,15,27,.75)}
+  html[data-tema="gelap"] .btn-primary:hover{background:linear-gradient(180deg,#ffa8c4,#f06292)}
+  html[data-tema="gelap"] .burger{background:#211823; color:var(--ink)}
+  html[data-tema="gelap"] header.nav{background:rgba(23,16,21,.86)}
+  html[data-tema="gelap"] .nav.open .nav-links{background:#211823}
+  html[data-tema="gelap"] .nav.open .nav-links a{border-bottom-color:#33242e}
+  html[data-tema="gelap"] .lede,
+  html[data-tema="gelap"] .f p,
+  html[data-tema="gelap"] details p,
+  html[data-tema="gelap"] .note,
+  html[data-tema="gelap"] .note-soft,
+  html[data-tema="gelap"] .cm-teks{color:#d9bcc7}
+  html[data-tema="gelap"] .brand-ink{color:var(--ink)}
+  html[data-tema="gelap"] .note{background:#1e1520; border-color:#3b2a36}
+  html[data-tema="gelap"] .sec-alt1{background:linear-gradient(180deg,#1b1319,#20161d)}
+  html[data-tema="gelap"] .sec-alt2{background:linear-gradient(180deg,#1d141a,#171015)}
+  html[data-tema="gelap"] .archbtn{background:linear-gradient(180deg,#2b1d26,#241922); border-color:#4a3341; color:#f486ab}
+  html[data-tema="gelap"] .archbtn.appimage{background:linear-gradient(180deg,#261a23,#1f1620); border-color:#3b2a36}
+  html[data-tema="gelap"] .mock{background:linear-gradient(160deg,#241a22,#1c1420); box-shadow:0 30px 60px -30px rgba(0,0,0,.8)}
+  html[data-tema="gelap"] .mock .bar{background:rgba(255,255,255,.06)}
+  html[data-tema="gelap"] .dock{background:rgba(255,255,255,.07)}
+  html[data-tema="gelap"] .win{border-color:#3b2a36; box-shadow:0 14px 30px -18px rgba(0,0,0,.8)}
+  html[data-tema="gelap"] .win .t{background:#2a1e27; border-bottom-color:#3b2a36}
+  html[data-tema="gelap"] .win .t b{background:#4a3341}
+  html[data-tema="gelap"] .win .t b:nth-child(2){background:#3b2a36}
+  html[data-tema="gelap"] .dock span{background:#4a3341}
+  html[data-tema="gelap"] .hero::before{opacity:.22}
+  html[data-tema="gelap"] .hero::after{opacity:.12}
+  html[data-tema="gelap"] .pill{color:#f486ab}
+  html[data-tema="gelap"] .tab.on{background:var(--pink-500); border-color:var(--pink-500); color:#2a0f1b}
+  html[data-tema="gelap"] .ribbon{color:#2a0f1b}
+  html[data-tema="gelap"] .panel code,
+  html[data-tema="gelap"] .panel .kbd{background:#2e2029}
+  html[data-tema="gelap"] .f .ic{background:#33232c; color:#f486ab}
+  html[data-tema="gelap"] #toast{background:#2c1f28; color:#f7e9ef; box-shadow:0 18px 40px -18px rgba(0,0,0,.9)}
+  html[data-tema="gelap"] .grad{background:linear-gradient(120deg,#f486ab,#ffb37a); -webkit-background-clip:text; background-clip:text}
+  html[data-tema="gelap"] .grp{color:#a98c9a}
+  @media (max-width:900px){
+    .nav-tools{margin-left:auto}
+    .burger{margin-left:0}
+  }
   /* ---------- komentar ---------- */
   /* PENTING: atribut hidden harus selalu menang atas display:flex/inline-flex,
      kalau tidak, chip OWNER & bar balasan ikut tampil untuk pengunjung anonim. */
@@ -356,6 +461,41 @@
     .cm-modal-btn{flex:1}
   }
 
+  /* ---------- TEMA GELAP untuk kolom komentar ---------- */
+  html[data-tema="gelap"] .cm-card{background:#211823; border-color:#3b2a36}
+  html[data-tema="gelap"] .cm-in,
+  html[data-tema="gelap"] .cm-ta{background:#1b1318; border-color:#3b2a36; color:var(--ink)}
+  html[data-tema="gelap"] .cm-in::placeholder,
+  html[data-tema="gelap"] .cm-ta::placeholder{color:#8e7381}
+  html[data-tema="gelap"] .cm-in:focus,
+  html[data-tema="gelap"] .cm-ta:focus{border-color:#7a4b60; box-shadow:0 0 0 3px rgba(244,143,177,.18)}
+  html[data-tema="gelap"] .cm-item{border-bottom-color:#33242e}
+  html[data-tema="gelap"] .cm-text{color:#e7cdd7}
+  html[data-tema="gelap"] .cm-reps{background:#1c1419; border-color:#33242e}
+  html[data-tema="gelap"] .cm-reps .cm-item{border-bottom-color:#33242e}
+  html[data-tema="gelap"] .cm-mention{background:#241a20; border-color:#3b2a36}
+  html[data-tema="gelap"] .cm-rep-bar{background:#2e2029; border-color:#3b2a36; color:#f486ab}
+  html[data-tema="gelap"] .cm-rep-bar button{background:#241a20; border-color:#3b2a36; color:#f486ab}
+  html[data-tema="gelap"] .cm-rep-bar button:hover{background:#33242e}
+  html[data-tema="gelap"] .cm-edit textarea{background:#1b1318; border-color:#7a4b60; color:var(--ink)}
+  html[data-tema="gelap"] .cm-btn-sm{background:#241a20; border-color:#3b2a36; color:#f486ab}
+  html[data-tema="gelap"] .cm-btn-sm:hover{background:#33242e}
+  html[data-tema="gelap"] .cm-btn-sm.simpan{background:linear-gradient(180deg,#f48fb1,#e0508a); color:#2a0f1b; border-color:transparent}
+  html[data-tema="gelap"] .cm-btn-sm.simpan:hover{background:linear-gradient(180deg,#ffa8c4,#f06292)}
+  html[data-tema="gelap"] .cm-status{background:#1e1520; border-color:#3b2a36}
+  html[data-tema="gelap"] .cm-status.own{background:rgba(47,124,246,.12); border-color:rgba(110,170,255,.4); color:#8ec2ff}
+  html[data-tema="gelap"] .cm-status.own b{color:#8ec2ff}
+  html[data-tema="gelap"] .badge-own{background:rgba(47,124,246,.16); border-color:rgba(110,170,255,.45); color:#8ec2ff}
+  html[data-tema="gelap"] .cm-msg.err{color:#ff8fa3}
+  html[data-tema="gelap"] .cm-msg.ok{color:#6ed49a}
+  html[data-tema="gelap"] .cm-flash{animation:cmflash-gelap 1.6s ease-out}
+  @keyframes cmflash-gelap{0%{background:#3a2833}100%{background:transparent}}
+  html[data-tema="gelap"] .cm-modal-kartu{background:#221924; box-shadow:0 26px 60px -20px rgba(0,0,0,.8), 0 0 0 1px #3b2a36}
+  html[data-tema="gelap"] .cm-modal-ikon{background:linear-gradient(160deg,#3a2330,#2e1d28); color:#ff8fa3}
+  html[data-tema="gelap"] .cm-modal-btn.batal{background:#241a20; border-color:#3b2a36; color:var(--ink)}
+  html[data-tema="gelap"] .cm-modal-btn.batal:hover{background:#33242e; border-color:#5a3d4a}
+  html[data-tema="gelap"] .cm-modal-latar{background:rgba(8,4,7,.6)}
+
 </style>
 </head>
 <body>
@@ -373,6 +513,16 @@
     <div class="nav-cta">
       <a class="btn btn-ghost" href="https://github.com/MatahariZzz/AzurePet" id="ghLink">GitHub</a>
       <a class="btn btn-primary" href="#unduh">Unduh</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" role="group" aria-label="Bahasa / Language">
+        <button type="button" class="lang-btn on" data-bahasa="id" aria-pressed="true">ID</button>
+        <button type="button" class="lang-btn" data-bahasa="en" aria-pressed="false">EN</button>
+      </div>
+      <button type="button" class="tool" id="btnTema" aria-label="Mode gelap" title="Mode gelap">
+        <svg class="i-bulan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5 8.5 8.5 0 1 0 20.5 14.6z"/></svg>
+        <svg class="i-matahari" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+      </button>
     </div>
     <button class="burger" id="burger" aria-label="Menu">☰</button>
   </div>
@@ -483,14 +633,12 @@
 
           <div class="grp">Arch Linux / Manjaro / EndeavourOS</div>
           <div class="arch">
-            <a class="btn dl" data-asset="AzurePet-Linux-Arch-x64.pkg.tar.zst" href="#"
-               style="background:linear-gradient(180deg,#fff0f5,#ffe1ec); border-color:var(--pink-300); color:var(--pink-600)">
+            <a class="btn dl archbtn" data-asset="AzurePet-Linux-Arch-x64.pkg.tar.zst" href="#">
               <span><span class="big">Paket resmi Arch</span><span class="sub">dipasang ke sistem · .pkg.tar.zst</span></span>
             </a>
           </div>
           <div class="arch">
-            <a class="btn dl" data-asset="AzurePet-Linux-x64.AppImage" href="#"
-               style="background:linear-gradient(180deg,#fff6fb,#ffe9f3); border-color:var(--pink-200); color:var(--pink-600)">
+            <a class="btn dl archbtn appimage" data-asset="AzurePet-Linux-x64.AppImage" href="#">
               <span><span class="big">AppImage</span><span class="sub">tanpa pasang, klik dua kali · juga untuk Fedora/openSUSE</span></span>
             </a>
           </div>
@@ -508,7 +656,7 @@
     </div>
   </section>
 
-  <section id="fitur" style="background:linear-gradient(180deg,#fff8fa,#ffeef4)">
+  <section id="fitur" class="sec-alt1">
     <div class="wrap">
       <div class="sec-head">
         <h2>Yang bisa dilakukan AzurePet</h2>
@@ -572,7 +720,7 @@
           <li>Berikutnya, buka lewat <b>Launchpad</b> atau <b>Spotlight</b> (<span class="kbd">⌘</span> + <span class="kbd">Spasi</span>, ketik “AzurePet”).</li>
           <li>Kalau macOS 15 ke atas tidak menampilkan tombol Open: buka <b>System Settings → Privacy &amp; Security</b>, gulir ke bawah, klik <b>Open Anyway</b>.</li>
         </ol>
-        <p style="color:#7c4a5e;font-size:14px;margin:16px 0 0">Pilih <b>Apple Silicon</b> untuk Mac M1/M2/M3/M4, atau <b>Intel</b> untuk Mac prosesor Intel. Ragu? Buka <span class="kbd"></span> → About This Mac, lihat baris “Chip” atau “Processor”.</p>
+        <p class="note-soft" style="margin:16px 0 0">Pilih <b>Apple Silicon</b> untuk Mac M1/M2/M3/M4, atau <b>Intel</b> untuk Mac prosesor Intel. Ragu? Buka <span class="kbd"></span> → About This Mac, lihat baris “Chip” atau “Processor”.</p>
       </div>
 
       <div class="panel" id="p-win">
@@ -582,7 +730,7 @@
           <li>Installer memasang AzurePet untuk pengguna kamu sendiri — tidak butuh hak administrator.</li>
           <li>Setelah selesai: shortcut ada di <b>Desktop</b>, dan aplikasinya bisa dicari di menu Start dengan kata kunci <b>AzurePet</b>.</li>
         </ol>
-        <p style="color:#7c4a5e;font-size:14px;margin:16px 0 0">Ragu pilih yang mana? Buka <b>Settings → System → About</b>, lihat baris <b>System type</b>: kalau tertulis “64-bit operating system, x64-based processor” pakai <b>64-bit (x64)</b>; kalau “32-bit” pakai <b>32-bit (x86)</b>. Installer 32-bit tetap bisa dipasang di Windows 64-bit, tapi versi 64-bit lebih ringan. Pakai <b>ARM64</b> hanya kalau perangkatmu ARM (Surface, Snapdragon).</p>
+        <p class="note-soft" style="margin:16px 0 0">Ragu pilih yang mana? Buka <b>Settings → System → About</b>, lihat baris <b>System type</b>: kalau tertulis “64-bit operating system, x64-based processor” pakai <b>64-bit (x64)</b>; kalau “32-bit” pakai <b>32-bit (x86)</b>. Installer 32-bit tetap bisa dipasang di Windows 64-bit, tapi versi 64-bit lebih ringan. Pakai <b>ARM64</b> hanya kalau perangkatmu ARM (Surface, Snapdragon).</p>
       </div>
 
       <div class="panel" id="p-linux">
@@ -592,7 +740,7 @@
           <li>Cari <b>AzurePet</b> di menu aplikasi.</li>
           <li>Butuh compositor aktif (GNOME, KDE, Cinnamon, dan Mint sudah aktif sejak awal) supaya latar karakter transparan.</li>
         </ol>
-        <p style="color:#7c4a5e;font-size:14px;margin:20px 0 0"><b>Arch Linux, Manjaro, EndeavourOS</b> — ada dua pilihan, pakai salah satu:</p>
+        <p class="note-soft" style="margin:20px 0 0"><b>Arch Linux, Manjaro, EndeavourOS</b> — ada dua pilihan, pakai salah satu:</p>
 
         <p style="margin:14px 0 0;font-weight:650;font-size:14.5px">1 · Paket resmi Arch (<code>.pkg.tar.zst</code>)</p>
         <ol style="margin-top:6px">
@@ -611,7 +759,7 @@
           <li>Ingin ikonnya masuk menu aplikasi? Pasang <b>AppImageLauncher</b>, lalu buka AppImage-nya sekali.</li>
         </ol>
 
-        <p style="color:#7c4a5e;font-size:14px;margin:18px 0 0"><b>Distro lain (Fedora, openSUSE, Void, …)</b> — pakai AppImage di atas; file yang sama jalan di distro apa pun.</p>
+        <p class="note-soft" style="margin:18px 0 0"><b>Distro lain (Fedora, openSUSE, Void, …)</b> — pakai AppImage di atas; file yang sama jalan di distro apa pun.</p>
       </div>
 
       <div class="sec-head" style="margin-top:44px">
@@ -628,7 +776,7 @@
     </div>
   </section>
 
-  <section id="tanya" style="background:linear-gradient(180deg,#ffeff5,#fff8fa)">
+  <section id="tanya" class="sec-alt2">
     <div class="wrap" style="max-width:820px">
       <div class="sec-head">
         <h2>Pertanyaan yang sering muncul</h2>
@@ -664,7 +812,7 @@
       </details>
     </div>
   </section>
-  <section id="komentar" style="background:linear-gradient(180deg,#fff8fa,#ffeef4)">
+  <section id="komentar" class="sec-alt1">
     <div class="wrap" style="max-width:820px">
       <div class="sec-head">
         <h2>Komentar &amp; masukan</h2>
@@ -748,7 +896,7 @@
 
 <footer>
   <div class="wrap foot">
-    <div class="l"><span class="ico ifoot"></span> <span><b style="color:#5b2b3f">AzurePet</b> v1.12.0 · dibuat dengan Electron + three.js</span></div>
+    <div class="l"><span class="ico ifoot"></span> <span><b class="brand-ink">AzurePet</b> v1.12.0 · dibuat dengan Electron + three.js</span></div>
     <div>
       <a href="https://github.com/MatahariZzz/AzurePet" id="ghLink2">GitHub</a> ·
       <a href="https://github.com/MatahariZzz/AzurePet/releases" id="relLink2">Rilis</a> ·
@@ -760,6 +908,353 @@
 <div id="toast"></div>
 
 <script>
+  /* ============================================================
+     BAHASA (Indonesia / English)  +  TEMA (terang / gelap)
+     ============================================================ */
+  const KAMUS = {
+ "teks": {
+  "AzurePet — karakter 3D yang berjalan-jalan di desktop": "AzurePet — a 3D character that walks around on your desktop",
+  "Unduh": "Download",
+  "Fitur": "Features",
+  "Cara pasang": "How to install",
+  "Pertanyaan": "FAQ",
+  "Versi 1.12.0 · gratis · tanpa iklan": "Version 1.12.0 · free · no ads",
+  "Karakter 3D kamu,": "Your 3D character,",
+  "hidup di desktop": "alive on your desktop",
+  "Muat file": "Load your",
+  "milikmu, dan karakternya langsung berdiri, berjalan-jalan, bisa di-drag, dan bereaksi saat diklik. Banyak karakter sekaligus, masing-masing dengan animasinya sendiri.": "file and it instantly stands up, walks around, can be dragged, and reacts when clicked. Many characters at once, each with its own animation.",
+  "Unduh untuk": "Download for",
+  "komputermu": "your computer",
+  "Lihat fiturnya": "See the features",
+  "Tersedia untuk macOS, Windows, dan Linux.": "Available for macOS, Windows and Linux.",
+  "Unduh AzurePet": "Download AzurePet",
+  "Pilih sesuai sistem operasi dan jenis prosesor komputermu.": "Pick the file that matches your operating system and processor.",
+  "macOS 10.15 Catalina ke atas": "macOS 10.15 Catalina or newer",
+  "prosesor Intel · .dmg": "Intel processor · .dmg",
+  "Windows 32-bit · juga jalan di 64-bit · .exe": "Windows 32-bit · also runs on 64-bit · .exe",
+  "Windows 64-bit · versi tercepat · .exe": "Windows 64-bit · fastest build · .exe",
+  "64-bit · pilih sesuai distro & cara pemasangan": "64-bit · choose by distro & install method",
+  "Paket resmi Arch": "Official Arch package",
+  "dipasang ke sistem · .pkg.tar.zst": "installed system-wide · .pkg.tar.zst",
+  "tanpa pasang, klik dua kali · juga untuk Fedora/openSUSE": "no install, just double-click · also for Fedora/openSUSE",
+  "Belum ditandatangani secara digital.": "Not digitally signed.",
+  "Windows akan menampilkan “Windows protected your PC” dan macOS akan menolak membuka aplikasinya pada percobaan pertama. Ini normal untuk aplikasi gratis tanpa sertifikat berbayar — caranya ada di bagian": "Windows will show “Windows protected your PC” and macOS will refuse to open the app the first time. That is normal for gratis apps without a paid certificate — the fix is in the",
+  ". Kode sumbernya terbuka di GitHub.": ". The source code is open on GitHub.",
+  "Lihat semua rilis & catatan versi →": "See all releases & version notes →",
+  "Yang bisa dilakukan AzurePet": "What AzurePet can do",
+  "Sederhana di permukaan, tapi cukup dalam untuk model 3D buatanmu sendiri.": "Simple on the surface, deep enough for your own 3D models.",
+  "Model .glb milikmu": "Your own .glb model",
+  "Format glTF binary maupun .gltf. Bisa beberapa file sekaligus, maksimal 12 karakter bersamaan.": "glTF binary or .gltf. Add several files at once, up to 12 characters on screen.",
+  "4 animasi per karakter": "4 animations per character",
+  "Saat diam, saat jalan, saat di-drag, dan saat diklik — pilih sendiri dari animasi yang ada di file modelmu.": "Idle, walking, dragging and clicking — choose each one from the animations inside your model file.",
+  "Klik, drag, bereaksi": "Click, drag, react",
+  "Klik kiri memutar animasi khusus. Tahan dan geser untuk memindahkan. Klik kanan membuka menu.": "Left-click plays a dedicated clip. Hold and drag to move it. Right-click opens the menu.",
+  "Tetap ringan": "Stays light",
+  "30 fps saat bergerak, 20 fps saat diam, dan render benar-benar berhenti ketika karakter disembunyikan.": "30 fps while moving, 20 fps while idle, and rendering stops completely when the character is hidden.",
+  "Selalu di atas": "Always on top",
+  "Karakter tidak tertutup jendela lain, dan di macOS tetap muncul walaupun ada aplikasi fullscreen.": "The character is never buried under other windows, and on macOS it stays visible even with a fullscreen app.",
+  "Jalan otomatis": "Walks on its own",
+  "Atur ukuran, kecepatan, arah hadap, dan area jalan. Bisa juga jalan sendiri saat komputer baru menyala.": "Set the size, speed, facing direction and walking area. It can also start walking as soon as the computer boots.",
+  "Tanpa terminal. Cukup klik-klik seperti aplikasi biasa.": "No terminal. Just click, like any normal app.",
+  "Buka file": "Open the",
+  "yang sudah diunduh.": "file you downloaded.",
+  "Klik kanan": "Right-click",
+  "ikon": "the",
+  "di jendela itu, pilih": "icon in that window, choose",
+  ", lalu": ", then",
+  "lagi. (Jangan klik dua kali biasa — macOS akan menolak karena aplikasinya belum bersertifikat Apple.)": "again. (Don't just double-click — macOS will refuse because the app is not signed by Apple.)",
+  "Setelah terbuka sekali, AzurePet menyalin dirinya ke folder": "After it opens once, AzurePet copies itself into the",
+  "dan terbuka lagi dari sana. File": "folder and opens from there. The",
+  "boleh dihapus, aplikasinya tetap ada.": "file can then be deleted, the app stays.",
+  "Berikutnya, buka lewat": "From then on, open it from",
+  "atau": "or",
+  "Spasi": "Space",
+  ", ketik “AzurePet”).": ", type “AzurePet”).",
+  "Kalau macOS 15 ke atas tidak menampilkan tombol Open: buka": "If macOS 15 or newer does not show the Open button: open",
+  ", gulir ke bawah, klik": ", scroll down and click",
+  "Pilih": "Choose",
+  "untuk Mac M1/M2/M3/M4, atau": "for M1/M2/M3/M4 Macs, or",
+  "untuk Mac prosesor Intel. Ragu? Buka": "for Intel-based Macs. Not sure? Open",
+  "→ About This Mac, lihat baris “Chip” atau “Processor”.": "→ About This Mac and look at the “Chip” or “Processor” line.",
+  "Jalankan file": "Run the",
+  "Kalau muncul": "If you see",
+  ", klik": ", click",
+  "lalu": "then",
+  "Installer memasang AzurePet untuk pengguna kamu sendiri — tidak butuh hak administrator.": "The installer sets AzurePet up for your user account only — no administrator rights needed.",
+  "Setelah selesai: shortcut ada di": "When it finishes: there is a shortcut on the",
+  ", dan aplikasinya bisa dicari di menu Start dengan kata kunci": ", and you can find the app in the Start menu by typing",
+  "Ragu pilih yang mana? Buka": "Not sure which one? Open",
+  ", lihat baris": ", look at the",
+  ": kalau tertulis “64-bit operating system, x64-based processor” pakai": ": if it says “64-bit operating system, x64-based processor” use",
+  "; kalau “32-bit” pakai": "; if it says “32-bit” use",
+  ". Installer 32-bit tetap bisa dipasang di Windows 64-bit, tapi versi 64-bit lebih ringan. Pakai": ". The 32-bit installer still works on 64-bit Windows, but the 64-bit build is lighter. Use",
+  "hanya kalau perangkatmu ARM (Surface, Snapdragon).": "only if your device is ARM (Surface, Snapdragon).",
+  "Klik dua kali file": "Double-click the",
+  "Software Center / GDebi terbuka → klik": "Software Center / GDebi opens → click",
+  "→ masukkan password.": "→ enter your password.",
+  "Cari": "Search for",
+  "di menu aplikasi.": "in the application menu.",
+  "Butuh compositor aktif (GNOME, KDE, Cinnamon, dan Mint sudah aktif sejak awal) supaya latar karakter transparan.": "An active compositor is required (GNOME, KDE, Cinnamon and Mint have it on by default) so the character background stays transparent.",
+  "— ada dua pilihan, pakai salah satu:": "— there are two options, use either one:",
+  "1 · Paket resmi Arch (": "1 · Official Arch package (",
+  "Pasang lewat terminal:": "Install from a terminal:",
+  "Atau klik dua kali file-nya lewat": "Or double-click the file with",
+  "(“Tambahkan/Instal Paket Lokal”).": "(“Add/Install Local Package”).",
+  "Setelah itu": "After that",
+  "muncul di menu aplikasi dan bisa dihapus lewat pacman/Pamac.": "appears in the application menu and can be removed with pacman/Pamac.",
+  "2 · AppImage (tanpa memasang apa pun)": "2 · AppImage (installs nothing)",
+  "Klik kanan →": "Right-click →",
+  "→ tab": "→ the",
+  "→ centang": "tab → tick",
+  "Klik dua kali → AzurePet langsung jalan. Tidak ada yang masuk ke sistem, tidak butuh sudo.": "Double-click → AzurePet runs straight away. Nothing is added to the system and no sudo is needed.",
+  "Kalau muncul pesan soal FUSE:": "If you get a message about FUSE:",
+  "Ingin ikonnya masuk menu aplikasi? Pasang": "Want it in the application menu? Install",
+  ", lalu buka AppImage-nya sekali.": ", then open the AppImage once.",
+  "— pakai AppImage di atas; file yang sama jalan di distro apa pun.": "— use the AppImage above; the same file runs on any distro.",
+  "Setelah terpasang": "After installing",
+  "Buka aplikasinya, lalu:": "Open the app, then:",
+  "Klik": "Click",
+  "+ Tambah karakter (.glb)...": "+ Add character (.glb)...",
+  "dan pilih file model 3D milikmu (bisa juga diseret ke jendela pengaturan).": "and pick your own 3D model file (you can also drag it into the settings window).",
+  "Pilih animasi untuk": "Choose the animation for",
+  "diam": "idle",
+  "jalan": "walking",
+  "di-drag": "dragging",
+  ", dan": "and",
+  "diklik": "clicking",
+  "Atur ukuran, kecepatan, dan area jalan. Selesai — karakternya langsung hidup di desktop.": "Set the size, speed and walking area. Done — the character is alive on your desktop.",
+  "Pertanyaan yang sering muncul": "Frequently asked questions",
+  "Apakah model 3D-nya disertakan?": "Does it include a 3D model?",
+  "Tidak. AzurePet tidak membawa model bawaan — kamu memakai file": "No. AzurePet ships without a built-in model — you use your own",
+  "milikmu sendiri. Animasi yang muncul di daftar juga otomatis diambil dari file model itu.": "file. The animation list is filled automatically from that model file.",
+  "Kenapa Windows / macOS memberi peringatan saat pertama dijalankan?": "Why do Windows / macOS warn me on first launch?",
+  "Karena aplikasinya belum ditandatangani dengan sertifikat digital berbayar (Windows code signing dan Apple Developer Program). Peringatan itu soal identitas pembuat, bukan virus. Klik": "Because the app is not signed with a paid digital certificate (Windows code signing and the Apple Developer Program). The warning is about the publisher's identity, not a virus. Click",
+  "di Windows, atau": "on Windows, or",
+  "klik kanan → Open": "right-click → Open",
+  "di macOS.": "on macOS.",
+  "Bedanya installer Windows 32-bit dan 64-bit apa?": "What is the difference between the 32-bit and 64-bit Windows installers?",
+  "Isinya aplikasi yang sama, bedanya mesin Electron yang dipakai. Yang": "They contain the same app; only the Electron engine differs. The",
+  "lebih ringan dan lebih cepat karena memakai arsitektur prosesor 64-bit secara penuh. Yang": "build is lighter and faster because it uses the full 64-bit processor architecture. The",
+  "bisa dipasang di Windows 32-bit maupun 64-bit, jadi pilih ini kalau kamu tidak yakin. Kalau Windows-mu ARM (Surface, Snapdragon), pakai yang": "build installs on both 32-bit and 64-bit Windows, so pick it when you are unsure. If your Windows is ARM (Surface, Snapdragon), use",
+  "Apakah aplikasi ini butuh internet?": "Does the app need internet?",
+  "Tidak sama sekali. Tidak ada koneksi ke server mana pun, tidak ada akun, tidak ada iklan. Model dan pengaturan hanya tersimpan di komputermu sendiri.": "Not at all. There is no connection to any server, no account, no ads. Models and settings only live on your own computer.",
+  "Berapa banyak karakter yang bisa dipakai sekaligus?": "How many characters can I use at once?",
+  "Maksimal 12. Setiap karakter berjalan sebagai jendela sendiri, jadi makin banyak karakter makin banyak pemakaian RAM. Dua sampai empat karakter biasanya paling nyaman.": "Up to 12. Each character runs in its own window, so more characters means more RAM. Two to four characters is usually the sweet spot.",
+  "Karakter tidak muncul, atau jendelanya hitam. Kenapa?": "The character does not appear, or its window is black. Why?",
+  "Biasanya driver kartu grafis. Coba perbarui driver VGA. Di dalam Remote Desktop, efek jendela transparan umumnya tidak jalan. Di Linux, pastikan compositor aktif.": "Usually the graphics driver. Try updating your GPU driver. Inside Remote Desktop the transparent-window effect generally does not work. On Linux, make sure a compositor is active.",
+  "Cara menghapus aplikasinya?": "How do I uninstall it?",
+  "Windows: Settings → Apps → Installed apps → AzurePet → Uninstall. macOS: seret AzurePet dari folder Applications ke Trash. Linux Debian:": "Windows: Settings → Apps → Installed apps → AzurePet → Uninstall. macOS: drag AzurePet from Applications to the Trash. Debian Linux:",
+  "atau lewat Software Center. Linux Arch:": "or use the Software Center. Arch Linux:",
+  ". AppImage: cukup hapus file": ". AppImage: just delete the",
+  "-nya (tidak ada yang tertinggal di sistem). File": "file (nothing is left behind on the system). Your",
+  "milikmu tidak ikut terhapus.": "files are not removed.",
+  "v1.12.0 · dibuat dengan Electron + three.js": "v1.12.0 · built with Electron + three.js",
+  "Rilis": "Releases",
+  "Komentar & masukan": "Comments & feedback",
+  "Tidak perlu akun, tidak perlu email. Pilih username dulu, lalu tulis apa saja.": "No account, no email. Pick a username first, then write anything.",
+  "Membalas": "Replying",
+  "Batal": "Cancel",
+  "Anonim — komentar darimu tampil sebagai": "Anonymous — your comment appears as",
+  "Ingat username saya": "Remember my username",
+  "Kirim komentar": "Post comment",
+  "Masuk": "Sign in",
+  "Memuat komentar…": "Loading comments…",
+  "Masuk sebagai owner": "Sign in as owner",
+  "Hapus komentar ini?": "Delete this comment?",
+  "Komentar dari": "The comment from",
+  "pengunjung ini": "this visitor",
+  "akan hilang dari layar semua pengunjung, dan balasan di bawahnya ikut terhapus. Tidak bisa dikembalikan.": "will disappear from every visitor's screen, and its replies go with it. This cannot be undone.",
+  "Ya, hapus": "Yes, delete",
+  "Komentar": "Comments",
+  "Distro lain (Fedora, openSUSE, Void, …)": "Other distros (Fedora, openSUSE, Void, …)"
+ },
+ "atribut": {
+  "Mode gelap": "Dark mode",
+  "Mode terang": "Light mode",
+  "Username kamu": "Your username",
+  "Tulis komentar, saran, atau laporan bug…": "Write a comment, suggestion or bug report…",
+  "Kunci owner": "Owner key",
+  "Komentar": "Comment",
+  "Menu": "Menu",
+  "Bahasa / Language": "Language"
+ },
+ "dinamis": {
+  "judul": "AzurePet — download for macOS, Windows, Linux",
+  "deskripsi": "AzurePet shows your own 3D character (.glb) walking around on your desktop. Available for macOS (Apple Silicon & Intel), Windows (x86 & ARM) and Linux.",
+  "Terdeteksi {os} — pilih jenis prosesor di bagian Unduh.": "Detected {os} — choose the processor type in the Download section.",
+  "Cocok untuk perangkat kamu": "Recommended for your device",
+  "Alamat repo belum terdeteksi. Pastikan halaman dibuka dari alamat <code>github.io</code>.<br>File yang dicari: <code>{berkas}</code>": "Repository address not detected. Make sure this page is opened from a <code>github.io</code> address.<br>File requested: <code>{berkas}</code>",
+  "Menyiapkan unduhan <code>{berkas}</code>…<br>Kalau yang terbuka halaman <b>404</b>, artinya file itu belum ada di rilis. Buka <a href=\"{rilis}\" target=\"_blank\" rel=\"noopener\" style=\"color:#fff;text-decoration:underline\">tab Releases</a> untuk melihat isi rilis.": "Preparing <code>{berkas}</code>…<br>If you land on a <b>404</b> page, that file is not in the release yet. Open the <a href=\"{rilis}\" target=\"_blank\" rel=\"noopener\" style=\"color:#fff;text-decoration:underline\">Releases tab</a> to see what is inside."
+ },
+ "komentar": {
+  "Belum ada komentar. Jadilah yang pertama ✨": "No comments yet. Be the first ✨",
+  "Kolom komentar belum diaktifkan oleh pemilik situs.": "The comment section has not been enabled by the site owner.",
+  "Komentar gagal dimuat. Coba muat ulang halaman ini.": "Comments failed to load. Try reloading this page.",
+  "Gagal memuat komentar: ": "Could not load comments: ",
+  "Balas": "Reply",
+  "Ubah": "Edit",
+  "Hapus": "Delete",
+  "Simpan": "Save",
+  "Batal": "Cancel",
+  "Keluar": "Sign out",
+  "Keluar dari mode owner": "Sign out of owner mode",
+  "Masuk sebagai owner": "Sign in as owner",
+  "Mode owner — komentar darimu berlencana <b>OWNER</b>.": "Owner mode — your comments carry the <b>OWNER</b> badge.",
+  "Anonim — komentar darimu tampil sebagai <b></b>.": "Anonymous — your comment shows as <b></b>.",
+  "Anonim — pilih username dulu sebelum menulis.": "Anonymous — pick a username before writing.",
+  "Ditulis oleh pemilik AzurePet": "Written by the AzurePet owner",
+  "Komentar ini pernah diubah penulisnya": "This comment was edited by its author",
+  "· diedit": "· edited",
+  "↳ membalas <b></b>": "↳ replying to <b></b>",
+  "· langsung": "· live",
+  "komentar": "comments",
+  "balasan": "replies",
+  "nonaktif": "disabled",
+  "gagal memuat": "failed to load",
+  "Pilih username dulu (minimal 2 huruf).": "Pick a username first (at least 2 characters).",
+  "Username maksimal 24 huruf.": "Username can be at most 24 characters.",
+  "Username itu dipakai pemilik situs. Pilih nama lain ya.": "That username belongs to the site owner. Please pick another one.",
+  "Tulis dulu balasanmu.": "Write your reply first.",
+  "Komentarnya masih kosong.": "The comment is still empty.",
+  "Komentar maksimal 600 huruf.": "A comment can be at most 600 characters.",
+  "Sabar sebentar — coba lagi dalam ": "Hang on — try again in ",
+  " detik.": " seconds.",
+  "Mengirim balasan…": "Sending reply…",
+  "Mengirim komentar…": "Sending comment…",
+  "Mengirim komentar sebagai owner…": "Sending comment as owner…",
+  "Balasan terkirim. Terima kasih!": "Reply posted. Thank you!",
+  "Komentar terkirim. Terima kasih!": "Comment posted. Thank you!",
+  "Tidak bisa menghubungi server komentar. Periksa koneksi internetmu.": "Cannot reach the comment server. Check your internet connection.",
+  "Komentar dihapus.": "Comment deleted.",
+  "Komentar diperbarui.": "Comment updated.",
+  "Gagal menghapus: ": "Could not delete: ",
+  "Gagal menyimpan: ": "Could not save: ",
+  "Gagal mengirim: ": "Could not send: ",
+  "Gagal memeriksa kunci: ": "Could not verify the key: ",
+  "Kunci owner salah.": "Wrong owner key.",
+  "Kunci owner yang tersimpan sudah tidak berlaku. Silakan masuk lagi.": "The saved owner key is no longer valid. Please sign in again.",
+  "Mode owner aktif — kamu bisa menghapus komentar siapa saja, dan mengubah komentar sendiri.": "Owner mode is on — you can delete anyone's comment and edit your own.",
+  "baru saja": "just now",
+  " menit lalu": " minutes ago",
+  " jam lalu": " hours ago",
+  " hari lalu": " days ago",
+  "1 menit lalu": "1 minute ago",
+  "1 jam lalu": "1 hour ago",
+  "Komentar ini": "This comment",
+  "1 komentar": "1 comment",
+  "1 balasan": "1 reply"
+ }
+};
+
+  let BAHASA = document.documentElement.getAttribute("lang") === "en" ? "en" : "id";
+
+  /* terjemahan untuk teks yang dibuat oleh JavaScript */
+  function t(teks) {
+    if (BAHASA !== "en" || !teks) return teks;
+    for (const grup of ["komentar", "teks", "atribut", "dinamis"]) {
+      const k = KAMUS[grup] && KAMUS[grup][teks];
+      if (k !== undefined) return k;
+    }
+    return teks;
+  }
+
+  /* terjemahan untuk teks yang sudah ada di dalam halaman */
+  const TEKS_ASLI = new Map();          // simpul teks -> teks Indonesia
+  const ATR_ASLI  = new Map();          // "id|nama" -> nilai Indonesia
+  const DIURUS_JS = ["cmList", "cmStat", "cmMsg", "cmStatusText", "cmOwnerLink",
+                     "cmCount", "cmCountN", "cmRepTo", "cmModalNama", "btnTema"];
+
+  function punyaJS(el) {
+    for (let e = el; e && e !== document.body; e = e.parentElement) {
+      if (e.id && DIURUS_JS.indexOf(e.id) !== -1) return true;
+    }
+    return false;
+  }
+
+  function pasangTeksHalaman(keInggris) {
+    const jalan = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode(n) {
+        const tag = n.parentElement ? n.parentElement.tagName : "";
+        if (tag === "SCRIPT" || tag === "STYLE") return NodeFilter.FILTER_REJECT;
+        if (!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        if (punyaJS(n.parentElement)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const semua = [];
+    while (jalan.nextNode()) semua.push(jalan.currentNode);
+
+    semua.forEach((n) => {
+      const asli = TEKS_ASLI.has(n) ? TEKS_ASLI.get(n) : n.nodeValue;
+      const kunci = asli.replace(/\s+/g, " ").trim();
+      const en = KAMUS.teks[kunci];
+      if (en === undefined) return;
+      if (!TEKS_ASLI.has(n)) TEKS_ASLI.set(n, asli);
+      if (!keInggris) { n.nodeValue = asli; return; }
+      const depan = /^\s/.test(asli) ? " " : "";
+      const belakang = /\s$/.test(asli) ? " " : "";
+      n.nodeValue = depan + en + belakang;
+    });
+
+    document.querySelectorAll("[placeholder],[aria-label],[title]").forEach((el) => {
+      if (el.id === "btnTema") return;                 // diurus fungsi tema
+      ["placeholder", "aria-label", "title"].forEach((nama) => {
+        const nilai = el.getAttribute(nama);
+        if (!nilai) return;
+        const kunci = el.id + "|" + nama;
+        if (!ATR_ASLI.has(kunci)) ATR_ASLI.set(kunci, nilai);
+        const asli = ATR_ASLI.get(kunci);
+        const en = KAMUS.atribut[asli];
+        if (en === undefined) return;
+        el.setAttribute(nama, keInggris ? en : asli);
+      });
+    });
+  }
+
+  function perbaruiLabelTema() {
+    const gelap = document.documentElement.getAttribute("data-tema") === "gelap";
+    const b = document.getElementById("btnTema");
+    if (!b) return;
+    const label = t(gelap ? "Mode terang" : "Mode gelap");
+    b.setAttribute("aria-label", label);
+    b.setAttribute("title", label);
+  }
+
+  function perbaruiTeksHalaman() {
+    document.documentElement.setAttribute("lang", BAHASA);
+    document.title = BAHASA === "en" ? KAMUS.dinamis.judul : "AzurePet — karakter 3D yang berjalan-jalan di desktop";
+    const d = document.querySelector('meta[name="description"]');
+    if (d) d.content = BAHASA === "en" ? KAMUS.dinamis.deskripsi
+      : "AzurePet menampilkan karakter 3D (.glb) milikmu yang berjalan-jalan di desktop. Tersedia untuk macOS (Apple Silicon & Intel), Windows (x86 & ARM), dan Linux.";
+    pasangTeksHalaman(BAHASA === "en");
+    perbaruiLabelTema();
+    document.querySelectorAll(".lang-btn").forEach((b) => {
+      const on = b.dataset.bahasa === BAHASA;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function pakaiBahasa(bahasa, simpan) {
+    BAHASA = bahasa === "en" ? "en" : "id";
+    if (simpan) { try { localStorage.setItem("azurepet-bahasa", BAHASA); } catch (e) {} }
+    perbaruiTeksHalaman();
+    if (typeof perbaruiTeksOs === "function") perbaruiTeksOs();
+    if (window.AzurePetKomentar) window.AzurePetKomentar.bahasa();
+  }
+
+  function pakaiTema(tema, simpan) {
+    const gelap = tema === "gelap";
+    document.documentElement.setAttribute("data-tema", gelap ? "gelap" : "terang");
+    if (simpan) { try { localStorage.setItem("azurepet-tema", gelap ? "gelap" : "terang"); } catch (e) {} }
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = gelap ? "#171015" : "#ffe6ee";
+    perbaruiLabelTema();
+  }
+
+  window.t = t;
+  window.pakaiBahasa = pakaiBahasa;
+
   /* ============================================================
      ALAMAT RILIS — DIDETEKSI OTOMATIS, TIDAK PERLU DIEDIT LAGI.
 
@@ -795,23 +1290,31 @@
   document.getElementById("ghLink2").href = REPO_URL;
   document.getElementById("allRel").href = RELEASES_URL;
   document.getElementById("relLink2").href = RELEASES_URL;
-  document.title = "AzurePet — Unduh untuk macOS, Windows, Linux";
+  /* judul & deskripsi diurus perbaruiTeksHalaman() */
 
   // ---- deteksi sistem operasi ----
   const ua = navigator.userAgent;
   const os = /Mac|iPhone|iPad/.test(ua) ? "mac" : /Win/.test(ua) ? "win" : /Linux|X11|CrOS/.test(ua) ? "linux" : "";
   const osName = { mac: "macOS", win: "Windows", linux: "Linux" }[os] || "";
-  if (os) {
-    document.getElementById("ctaOs").textContent = osName;
+
+  function perbaruiTeksOs() {
+    if (!os) return;
+    document.getElementById("ctaOs").textContent = t("komputermu");
     document.getElementById("smartText").textContent =
-      "Terdeteksi " + osName + " — pilih jenis prosesor di bagian Unduh.";
+      t("Terdeteksi {os} — pilih jenis prosesor di bagian Unduh.").replace("{os}", osName);
+    const r = document.querySelector(".ribbon");
+    if (r) r.textContent = t("Cocok untuk perangkat kamu");
+  }
+
+  if (os) {
     const card = document.querySelector('.os[data-os="' + os + '"]');
     if (card) {
       card.classList.add("recommended");
       const r = document.createElement("span");
-      r.className = "ribbon"; r.textContent = "Cocok untuk perangkat kamu";
+      r.className = "ribbon";
       card.prepend(r);
     }
+    perbaruiTeksOs();
   }
 
   // ---- tombol unduh ----
@@ -828,10 +1331,11 @@
     a.addEventListener("click", e => {
       if (notConfigured) {
         e.preventDefault();
-        toast("Alamat repo belum terdeteksi. Pastikan halaman dibuka dari alamat <code>github.io</code>.<br>File yang dicari: <code>" + asset + "</code>");
+        toast(t("Alamat repo belum terdeteksi. Pastikan halaman dibuka dari alamat <code>github.io</code>.<br>File yang dicari: <code>{berkas}</code>").replace("{berkas}", asset));
         return;
       }
-      toast("Menyiapkan unduhan <code>" + asset + "</code>…<br>Kalau yang terbuka halaman <b>404</b>, artinya file itu belum ada di rilis. Buka <a href=\"" + RELEASES_URL + "\" target=\"_blank\" rel=\"noopener\" style=\"color:#fff;text-decoration:underline\">tab Releases</a> untuk melihat isi rilis.");
+      toast(t("Menyiapkan unduhan <code>{berkas}</code>…<br>Kalau yang terbuka halaman <b>404</b>, artinya file itu belum ada di rilis. Buka <a href=\"{rilis}\" target=\"_blank\" rel=\"noopener\" style=\"color:#fff;text-decoration:underline\">tab Releases</a> untuk melihat isi rilis.")
+        .replace("{berkas}", asset).replace("{rilis}", RELEASES_URL));
     });
   });
 
@@ -850,6 +1354,19 @@
   const nav = document.getElementById("nav");
   document.getElementById("burger").addEventListener("click", () => nav.classList.toggle("open"));
   document.querySelectorAll(".nav-links a").forEach(a => a.addEventListener("click", () => nav.classList.remove("open")));
+
+  // ---- tombol tema & bahasa ----
+  document.getElementById("btnTema").addEventListener("click", () => {
+    pakaiTema(document.documentElement.getAttribute("data-tema") === "gelap" ? "terang" : "gelap", true);
+  });
+  document.querySelectorAll(".lang-btn").forEach((b) => {
+    b.addEventListener("click", () => pakaiBahasa(b.dataset.bahasa, true));
+  });
+  pakaiTema(document.documentElement.getAttribute("data-tema") || "terang", false);
+  perbaruiTeksHalaman();
+  if (BAHASA === "en" && os) perbaruiTeksOs();
+
+  
   /* ============================================================
      KOMENTAR — anonim, tanpa akun, bisa dibalas, diubah, dihapus.
 
@@ -864,6 +1381,11 @@
      YANG PERLU DIISI: dua nilai di bawah (lihat PANDUAN-KOMENTAR.md).
      ============================================================ */
   (function () {
+    /* Terjemahan: semua teks yang dibuat skrip ini lewat T(), supaya ikut
+       tombol ID/EN di navigasi. */
+    const T = (teks) => (typeof window.t === "function" ? window.t(teks) : teks);
+    const INGGRIS = () => document.documentElement.getAttribute("lang") === "en";
+
     const SB_URL  = "https://iuahrxnbkeriemxzixse.supabase.co";   /* contoh: "https://abcdefghijklm.supabase.co" */
     const SB_KEY  = "sb_publishable_huMz6SasaOvdSf59a7D5jQ_0-D8704h";   /* contoh: "eyJhbGciOiJIUzI1NiIsInR5cCI6..." */
 
@@ -911,12 +1433,14 @@
       const t = new Date(iso).getTime();
       if (!t) return "";
       const d = Math.max(0, Math.floor((Date.now() - t) / 1000));
-      if (d < 45) return "baru saja";
-      if (d < 3600) return Math.round(d / 60) + " menit lalu";
-      if (d < 86400) return Math.round(d / 3600) + " jam lalu";
-      if (d < 2592000) return Math.round(d / 86400) + " hari lalu";
+      const satuan = (n, satu, jamak) => (n === 1 ? T(satu) : n + T(jamak));
+      if (d < 45) return T("baru saja");
+      if (d < 3600) return satuan(Math.round(d / 60), "1 menit lalu", " menit lalu");
+      if (d < 86400) return satuan(Math.round(d / 3600), "1 jam lalu", " jam lalu");
+      if (d < 2592000) return Math.round(d / 86400) + T(" hari lalu");
+      const wilayah = INGGRIS() ? "en-GB" : "id-ID";
       try {
-        return new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+        return new Date(iso).toLocaleDateString(wilayah, { day: "numeric", month: "short", year: "numeric" });
       } catch (e) { return new Date(iso).toLocaleDateString(); }
     }
 
@@ -925,16 +1449,16 @@
       if (!elStatus) return;
       if (token) {
         elStatus.className = "cm-status own";
-        elStatusText.innerHTML = "Mode owner — komentar darimu berlencana <b>OWNER</b>.";
+        elStatusText.innerHTML = T("Mode owner — komentar darimu berlencana <b>OWNER</b>.");
         return;
       }
       elStatus.className = "cm-status";
       const nama = elName.value.trim();
       if (nama.length >= 2) {
-        elStatusText.innerHTML = 'Anonim — komentar darimu tampil sebagai <b></b>.';
+        elStatusText.innerHTML = T('Anonim — komentar darimu tampil sebagai <b></b>.');
         elStatusText.querySelector("b").textContent = nama;
       } else {
-        elStatusText.textContent = "Anonim — pilih username dulu sebelum menulis.";
+        elStatusText.textContent = T("Anonim — pilih username dulu sebelum menulis.");
       }
     }
 
@@ -998,13 +1522,13 @@
       const simpan = document.createElement("button");
       simpan.className = "cm-btn-sm simpan";
       simpan.type = "button";
-      simpan.textContent = "Simpan";
+      simpan.textContent = T("Simpan");
       simpan.addEventListener("click", () => simpanUbah(c, ta, simpan));
 
       const batal = document.createElement("button");
       batal.className = "cm-btn-sm";
       batal.type = "button";
-      batal.textContent = "Batal";
+      batal.textContent = T("Batal");
       batal.addEventListener("click", () => { ubah = null; renderUlang(); });
 
       const sisa = document.createElement("span");
@@ -1054,32 +1578,32 @@
         const b = document.createElement("span");
         b.className = "badge-own";
         b.innerHTML = CHECK + "<span>Owner</span>";
-        b.title = "Ditulis oleh pemilik AzurePet";
+        b.title = T("Ditulis oleh pemilik AzurePet");
         head.appendChild(b);
       }
 
       const tm = document.createElement("span");
       tm.className = "cm-time";
       tm.textContent = waktu(c.dibuat);
-      if (c.dibuat) tm.title = new Date(c.dibuat).toLocaleString("id-ID");
+      if (c.dibuat) tm.title = new Date(c.dibuat).toLocaleString(INGGRIS() ? "en-GB" : "id-ID");
       head.appendChild(tm);
 
       if (c.diedit) {
         const de = document.createElement("span");
         de.className = "cm-diedit";
-        de.textContent = "· diedit";
-        de.title = "Komentar ini pernah diubah penulisnya";
+        de.textContent = T("· diedit");
+        de.title = T("Komentar ini pernah diubah penulisnya");
         head.appendChild(de);
       }
 
       const tools = document.createElement("div");
       tools.className = "cm-tools";
-      const balasBtn = tombolMini("Balas", "", () => mulaiBalas(Object.assign({}, c, { induk: akarId })));
+      const balasBtn = tombolMini(T("Balas"), "", () => mulaiBalas(Object.assign({}, c, { induk: akarId })));
       tools.appendChild(balasBtn);
 
       if (!(ubah && ubah.id === c.id)) {
-        if (bisaUbah(c)) tools.appendChild(tombolMini("Ubah", "", () => { ubah = { id: c.id, isi: c.isi }; renderUlang(); }));
-        if (bisaHapus(c)) tools.appendChild(tombolMini("Hapus", "del", (e) => hapus(c, e.target)));
+        if (bisaUbah(c)) tools.appendChild(tombolMini(T("Ubah"), "", () => { ubah = { id: c.id, isi: c.isi }; renderUlang(); }));
+        if (bisaHapus(c)) tools.appendChild(tombolMini(T("Hapus"), "del", (e) => hapus(c, e.target)));
       }
       head.appendChild(tools);
 
@@ -1088,7 +1612,7 @@
       if (c.balas_ke) {
         const m = document.createElement("span");
         m.className = "cm-mention";
-        m.innerHTML = "↳ membalas <b></b>";
+        m.innerHTML = T("↳ membalas <b></b>");
         m.querySelector("b").textContent = "@" + c.balas_ke;
         body.appendChild(m);
       }
@@ -1113,7 +1637,7 @@
     function gambar(rows) {
       barisTerakhir = rows;
       elList.innerHTML = "";
-      if (!rows.length) { kosong("Belum ada komentar. Jadilah yang pertama ✨"); elStat.textContent = "0 komentar"; return; }
+      if (!rows.length) { kosong(T("Belum ada komentar. Jadilah yang pertama ✨")); elStat.textContent = jumlahKata(0, "komentar"); return; }
 
       const akar = [], anak = {};
       rows.forEach((c) => {
@@ -1149,10 +1673,15 @@
     function renderUlang() { gambar(barisTerakhir); }
 
     let jmlAkar = 0, jmlBalasanTerakhir = 0;
+    function jumlahKata(n, jenis) {
+      if (n === 1) return T(jenis === "komentar" ? "1 komentar" : "1 balasan");
+      return n + " " + T(jenis);
+    }
+
     function perbaruiStat() {
-      elStat.textContent = jmlAkar + " komentar"
-        + (jmlBalasanTerakhir ? " · " + jmlBalasanTerakhir + " balasan" : "")
-        + (langsung ? " · langsung" : "");
+      elStat.textContent = jumlahKata(jmlAkar, "komentar")
+        + (jmlBalasanTerakhir ? " · " + jumlahKata(jmlBalasanTerakhir, "balasan") : "")
+        + (langsung ? " " + T("· langsung") : "");
     }
 
     /* ============================================================
@@ -1282,8 +1811,8 @@
     }
 
     function muat(flashId, diam) {
-      if (!aktif) { kosong("Kolom komentar belum diaktifkan oleh pemilik situs."); elStat.textContent = "nonaktif"; return; }
-      if (!diam) kosong("Memuat komentar…");
+      if (!aktif) { kosong(T("Kolom komentar belum diaktifkan oleh pemilik situs.")); elStat.textContent = T("nonaktif"); return; }
+      if (!diam) kosong(T("Memuat komentar…"));
       api("/rest/v1/komentar?select=id,nama,isi,owner,diedit,dibuat,induk,balas_ke&order=dibuat.desc&limit=400")
         .then((rows) => {
           gambar(Array.isArray(rows) ? rows : []);
@@ -1293,8 +1822,8 @@
           }
         })
         .catch((e) => {
-          kosong("Komentar gagal dimuat. Coba muat ulang halaman ini.");
-          elStat.textContent = "gagal memuat";
+          kosong(T("Komentar gagal dimuat. Coba muat ulang halaman ini."));
+          elStat.textContent = T("gagal memuat");
           console.warn("komentar:", e.message);
         });
     }
@@ -1312,7 +1841,7 @@
     function batalBalas() {
       balas = null;
       elRepBar.hidden = true;
-      elRepTo.textContent = "@nama";
+      elRepTo.textContent = "@nama";   /* placeholder, diganti nama saat membalas */
     }
 
     $("cmRepCancel").addEventListener("click", batalBalas);
@@ -1326,26 +1855,26 @@
     }
 
     function kirim() {
-      if (!aktif) { pesan("Kolom komentar belum diaktifkan oleh pemilik situs.", "err"); return; }
+      if (!aktif) { pesan(T("Kolom komentar belum diaktifkan oleh pemilik situs."), "err"); return; }
 
-      if (elHp.value) { pesan("Komentar terkirim. Terima kasih!", "ok"); elText.value = ""; return; }
+      if (elHp.value) { pesan(T("Komentar terkirim. Terima kasih!"), "ok"); elText.value = ""; return; }
 
       const nama = elName.value.trim().replace(/\s+/g, " ");
       const isi  = elText.value.trim();
 
-      if (nama.length < 2) { pesan("Pilih username dulu (minimal 2 huruf).", "err"); elName.focus(); return; }
-      if (nama.length > 24) { pesan("Username maksimal 24 huruf.", "err"); return; }
-      if (!token && CADANGAN.indexOf(nama.toLowerCase()) !== -1) { pesan("Username itu dipakai pemilik situs. Pilih nama lain ya.", "err"); return; }
-      if (isi.length < 2) { pesan(balas ? "Tulis dulu balasanmu." : "Komentarnya masih kosong.", "err"); elText.focus(); return; }
-      if (isi.length > 600) { pesan("Komentar maksimal 600 huruf.", "err"); return; }
+      if (nama.length < 2) { pesan(T("Pilih username dulu (minimal 2 huruf)."), "err"); elName.focus(); return; }
+      if (nama.length > 24) { pesan(T("Username maksimal 24 huruf."), "err"); return; }
+      if (!token && CADANGAN.indexOf(nama.toLowerCase()) !== -1) { pesan(T("Username itu dipakai pemilik situs. Pilih nama lain ya."), "err"); return; }
+      if (isi.length < 2) { pesan(balas ? T("Tulis dulu balasanmu.") : T("Komentarnya masih kosong."), "err"); elText.focus(); return; }
+      if (isi.length > 600) { pesan(T("Komentar maksimal 600 huruf."), "err"); return; }
 
       if (!token) {
         const sisa = terkunci(COOLDOWN);
-        if (sisa > 0) { pesan("Sabar sebentar — coba lagi dalam " + Math.ceil(sisa / 1000) + " detik.", "err"); return; }
+        if (sisa > 0) { pesan(T("Sabar sebentar — coba lagi dalam ") + Math.ceil(sisa / 1000) + T(" detik."), "err"); return; }
       }
 
       elSend.disabled = true;
-      pesan(balas ? "Mengirim balasan…" : (token ? "Mengirim komentar sebagai owner…" : "Mengirim komentar…"));
+      pesan(balas ? T("Mengirim balasan…") : (token ? T("Mengirim komentar sebagai owner…") : T("Mengirim komentar…")));
 
       api("/rest/v1/rpc/kirim_komentar", {
         method: "POST",
@@ -1363,13 +1892,13 @@
         perbaruiJumlah();
         const adalahBalasan = !!balas;
         batalBalas();
-        pesan(adalahBalasan ? "Balasan terkirim. Terima kasih!" : "Komentar terkirim. Terima kasih!", "ok");
+        pesan(adalahBalasan ? T("Balasan terkirim. Terima kasih!") : T("Komentar terkirim. Terima kasih!"), "ok");
         muat(hasil && hasil.id ? hasil.id : null);
       }).catch((e) => {
         const m = String(e.message || "");
         if (/Terlalu|harus|dipakai/i.test(m)) pesan(m, "err");
-        else if (/fetch|network|Failed/i.test(m)) pesan("Tidak bisa menghubungi server komentar. Periksa koneksi internetmu.", "err");
-        else pesan("Gagal mengirim: " + m, "err");
+        else if (/fetch|network|Failed/i.test(m)) pesan(T("Tidak bisa menghubungi server komentar. Periksa koneksi internetmu."), "err");
+        else pesan(T("Gagal mengirim: ") + m, "err");
       }).then(() => { elSend.disabled = false; });
     }
 
@@ -1390,13 +1919,13 @@
         if (i > -1) { barisTerakhir[i].isi = isi; barisTerakhir[i].diedit = true; }
         ubah = null;
         renderUlang();
-        pesan("Komentar diperbarui.", "ok");
+        pesan(T("Komentar diperbarui."), "ok");
         muat(null, true);
       }).catch((e) => {
         tombol.disabled = false;
         const m = String(e.message || "");
         if (/sendiri|izin|tidak berhak|kunci/i.test(m)) pesan(m, "err");
-        else pesan("Gagal menyimpan: " + m, "err");
+        else pesan(T("Gagal menyimpan: ") + m, "err");
       });
     }
 
@@ -1417,7 +1946,7 @@
     function tanyaHapus(nama) {
       if (!elModal) return Promise.resolve(false);
       const elNama = $("cmModalNama");
-      if (elNama) elNama.textContent = (nama && String(nama).trim()) || "pengunjung ini";
+      if (elNama) elNama.textContent = (nama && String(nama).trim()) || T("pengunjung ini");
       modalFokusKembali = document.activeElement;
       elModal.hidden = false;
       document.body.classList.add("cm-modal-buka");
@@ -1458,14 +1987,14 @@
           method: "POST",
           body: JSON.stringify({ p_id: c.id, p_token: token || null })
         }).then(() => {
-          pesan("Komentar dihapus.", "ok");
+          pesan(T("Komentar dihapus."), "ok");
           ubah = null;
           muat();
         }).catch((e) => {
           if (tombol) tombol.disabled = false;
           const m = String(e.message || "");
           if (/sendiri|izin|tidak berhak|kunci/i.test(m)) pesan(m, "err");
-          else pesan("Gagal menghapus: " + m, "err");
+          else pesan(T("Gagal menghapus: ") + m, "err");
         });
       });
     }
@@ -1474,12 +2003,12 @@
     function modeOwner(simpan) {
       if (simpan) {
         elOwnChip.hidden = false;
-        $("cmOwnerLink").textContent = "Keluar dari mode owner";
+        $("cmOwnerLink").textContent = T("Keluar dari mode owner");
         if (!elName.value.trim()) elName.value = "AzurePet";
-        pesan("Mode owner aktif — kamu bisa menghapus komentar siapa saja, dan mengubah komentar sendiri.", "ok");
+        pesan(T("Mode owner aktif — kamu bisa menghapus komentar siapa saja, dan mengubah komentar sendiri."), "ok");
       } else {
         elOwnChip.hidden = true;
-        $("cmOwnerLink").textContent = "Masuk sebagai owner";
+        $("cmOwnerLink").textContent = T("Masuk sebagai owner");
       }
       perbaruiStatus();
       ubah = null;
@@ -1532,7 +2061,7 @@
         elOwnBox.classList.remove("on");
         modeOwner(true);
       }).catch((e) => {
-        pesan(/token|salah|invalid|JWT|permission/i.test(e.message) ? "Kunci owner salah." : "Gagal memeriksa kunci: " + e.message, "err");
+        pesan(/token|salah|invalid|JWT|permission/i.test(e.message) ? T("Kunci owner salah.") : T("Gagal memeriksa kunci: ") + e.message, "err");
       });
     });
 
@@ -1547,12 +2076,28 @@
         token = "";
         try { localStorage.removeItem(LS_TOKEN); } catch (err) {}
         elOwnChip.hidden = true;
-        $("cmOwnerLink").textContent = "Masuk sebagai owner";
+        $("cmOwnerLink").textContent = T("Masuk sebagai owner");
         perbaruiStatus();
-        pesan("Kunci owner yang tersimpan sudah tidak berlaku. Silakan masuk lagi.", "err");
+        pesan(T("Kunci owner yang tersimpan sudah tidak berlaku. Silakan masuk lagi."), "err");
         muat();
       });
     }
+
+    /* ---------- dipanggil tombol ID/EN di navigasi ---------- */
+    window.AzurePetKomentar = {
+      bahasa: function () {
+        try {
+          perbaruiStatus();
+          const tautan = $("cmOwnerLink");
+          if (tautan) tautan.textContent = token ? T("Keluar dari mode owner") : T("Masuk sebagai owner");
+          if (elRepTo) elRepTo.textContent = balas ? "@" + balas.ke : "@nama";
+          pesan("");
+          if (barisTerakhir.length) renderUlang();
+          else if (aktif) { kosong(T("Belum ada komentar. Jadilah yang pertama ✨")); elStat.textContent = jumlahKata(0, "komentar"); }
+          perbaruiStat();
+        } catch (e) {}
+      }
+    };
 
     /* ---------- mulai ---------- */
     try { const n = localStorage.getItem(LS_NAME); if (n) elName.value = n; } catch (e) {}
@@ -1563,5 +2108,5 @@
   })();
 
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5ec5709ea314083',t:'MTc5NTM5NjcwNg=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5ec5709ea314083',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5edc32b6ce0bff8',t:'MTc5NTQxMTYyMQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5edc32b6ce0bff8',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
