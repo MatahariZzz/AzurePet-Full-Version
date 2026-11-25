@@ -20,7 +20,11 @@
       AzurePet-Linux-arm64.deb      (Linux ARM64, Debian/Ubuntu)
       AzurePet-Linux-Arch-x64.pkg.tar.zst  (Arch Linux, Manjaro, EndeavourOS)
       AzurePet-Linux-x64.AppImage    (universal: Arch, Fedora, openSUSE, distro apa pun)
-  Halaman ini mandiri: tidak butuh internet, CDN, atau file lain.
+  Bagian "Versi & installer terdahulu" mengambil daftar rilis dari
+  GitHub Releases API repo yang sama — tanpa batas jumlah, ditampilkan
+  bertahap 10-10 lewat tombol "Tampilkan versi yang lebih lama".
+  Halaman ini mandiri: tidak butuh internet, CDN, atau file lain
+  (kecuali bagian versi terdahulu & kolom komentar yang memang butuh API).
   ============================================================
 -->
 <html lang="id">
@@ -165,6 +169,29 @@
   .note b{color:var(--pink-600)}
   .allrel{text-align:center; margin-top:18px; font-size:14px}
 
+  /* ---------- versi & installer terdahulu ---------- */
+  .rl-list{display:flex; flex-direction:column; gap:12px; max-width:820px; margin:0 auto}
+  .rl-kartu{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
+    box-shadow:0 14px 34px -28px rgba(91,43,63,.5)}
+  .rl-kartu.terbaru{border-color:var(--pink-400); box-shadow:0 0 0 3px rgba(240,98,146,.14), 0 18px 40px -26px rgba(226,77,131,.6)}
+  .rl-kepala{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px}
+  .rl-nama{font-size:17px; font-weight:800; letter-spacing:-.3px}
+  .rl-tgl{font-size:13px; color:var(--muted)}
+  .rl-lencana{font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--pink-500); color:#fff; padding:3px 11px; border-radius:999px}
+  .rl-catatan{margin:8px 0 2px; font-size:14px; color:#7c4a5e; white-space:pre-wrap; overflow-wrap:anywhere}
+  .rl-unduh{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+  .rl-unduh .btn{padding:8px 14px; font-size:13px; font-weight:700}
+  .rl-file{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .rl-ukuran{font-size:11.5px; font-weight:500; opacity:.75; margin-left:8px}
+  .rl-kosong{text-align:center; color:var(--muted); font-size:14px; padding:26px 10px}
+  .rl-muat{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:26px; text-align:center;
+    color:var(--muted); font-size:14px; max-width:820px; margin:0 auto}
+  .rl-muat .dn-bar{max-width:220px; margin:12px auto 0}
+  .rl-info{text-align:center; color:var(--muted); font-size:13.5px; margin:2px 0 0}
+  .rl-lagi{display:flex; justify-content:center; margin-top:2px}
+  .rl-lagi .btn{padding:10px 24px; font-size:14px}
+
   /* ---------- features ---------- */
   .feat{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
   .f{background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px}
@@ -299,6 +326,12 @@
   html[data-tema="gelap"] .f .ic{background:#33232c; color:#f486ab}
   html[data-tema="gelap"] .grad{background:linear-gradient(120deg,#f486ab,#ffb37a); -webkit-background-clip:text; background-clip:text}
   html[data-tema="gelap"] .grp{color:#a98c9a}
+  html[data-tema="gelap"] .rl-kartu,
+  html[data-tema="gelap"] .rl-muat{background:#211823; border-color:#3b2a36}
+  html[data-tema="gelap"] .rl-kartu.terbaru{border-color:#7a4b60;
+    box-shadow:0 0 0 3px rgba(244,143,177,.14), 0 18px 40px -26px rgba(0,0,0,.7)}
+  html[data-tema="gelap"] .rl-lencana{color:#2a0f1b}
+  html[data-tema="gelap"] .rl-catatan{color:#d9bcc7}
   @media (max-width:900px){
     .nav-tools{margin-left:auto}
     .burger{margin-left:0}
@@ -532,6 +565,7 @@
     <a class="brand" href="#top"><span class="ico ibrand" role="img" aria-label="AzurePet"></span>AzurePet</a>
     <nav class="nav-links">
       <a href="#unduh">Unduh</a>
+      <a href="#versi">Versi lama</a>
       <a href="#fitur">Fitur</a>
       <a href="#pasang">Cara pasang</a>
       <a href="#tanya">Pertanyaan</a>
@@ -681,6 +715,22 @@
       </div>
 
       <p class="allrel"><a href="https://github.com/MatahariZzz/AzurePet/releases" id="allRel">Lihat semua rilis &amp; catatan versi →</a></p>
+    </div>
+  </section>
+
+  <section id="versi">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Versi &amp; installer terdahulu</h2>
+        <p>Butuh versi yang lebih lama? Pilih di bawah — daftarnya diambil langsung dari halaman rilis GitHub.</p>
+      </div>
+      <div class="rl-list" id="rlList">
+        <div class="rl-muat" id="rlMuat">
+          <span id="rlMuatTeks">Memuat daftar versi…</span>
+          <span class="dn-bar"><i></i></span>
+        </div>
+      </div>
+      <p class="allrel"><a href="https://github.com/MatahariZzz/AzurePet/releases" id="allRel2">Buka halaman rilis di GitHub →</a></p>
     </div>
   </section>
 
@@ -1107,7 +1157,20 @@
   "Ya, hapus": "Yes, delete",
   "Komentar": "Comments",
   "Distro lain (Fedora, openSUSE, Void, …)": "Other distros (Fedora, openSUSE, Void, …)",
-  "Menyiapkan unduhan": "Preparing download"
+  "Menyiapkan unduhan": "Preparing download",
+  "Versi lama": "Old versions",
+  "Versi & installer terdahulu": "Past versions & installers",
+  "Butuh versi yang lebih lama? Pilih di bawah — daftarnya diambil langsung dari halaman rilis GitHub.": "Need an older version? Pick one below — the list is pulled straight from the GitHub releases page.",
+  "Memuat daftar versi…": "Loading the version list…",
+  "Buka halaman rilis di GitHub →": "Open the releases page on GitHub →",
+  "Terbaru": "Latest",
+  "Belum ada versi terdahulu.": "No past versions yet.",
+  "Daftar versi tidak bisa dimuat. Coba lagi nanti, atau buka halaman rilis di GitHub.": "The version list could not be loaded. Try again later, or open the releases page on GitHub.",
+  "Lihat catatan versi": "See the release notes",
+  "Tampilkan versi yang lebih lama": "Show older versions",
+  "Memuat versi yang lebih lama…": "Loading older versions…",
+  "Menampilkan {tampil} dari {total} versi": "Showing {tampil} of {total} versions",
+  "Coba lagi": "Try again"
  },
  "atribut": {
   "Mode gelap": "Dark mode",
@@ -1354,7 +1417,20 @@
    "Ya, hapus": "Muhun, piceun",
    "Komentar": "Komentar",
    "Distro lain (Fedora, openSUSE, Void, …)": "Distro séjén (Fedora, openSUSE, Void, …)",
-   "Menyiapkan unduhan": "Keur nyiapkeun unduhan"
+   "Menyiapkan unduhan": "Keur nyiapkeun unduhan",
+   "Versi lama": "Vérsi kolot",
+   "Versi & installer terdahulu": "Vérsi & installer nu baheula",
+   "Butuh versi yang lebih lama? Pilih di bawah — daftarnya diambil langsung dari halaman rilis GitHub.": "Butuh vérsi nu leuwih kolot? Pilih di handap — daptarna dicokot langsung tina halaman rilis GitHub.",
+   "Memuat daftar versi…": "Keur ngamuat daptar vérsi…",
+   "Buka halaman rilis di GitHub →": "Buka halaman rilis di GitHub →",
+   "Terbaru": "Panganyarna",
+   "Belum ada versi terdahulu.": "Can aya vérsi nu baheula.",
+   "Daftar versi tidak bisa dimuat. Coba lagi nanti, atau buka halaman rilis di GitHub.": "Daptar vérsi teu bisa dimuat. Cobaan deui engké, atawa buka halaman rilis di GitHub.",
+   "Lihat catatan versi": "Tempo catetan vérsi",
+   "Tampilkan versi yang lebih lama": "Témbongkeun vérsi nu leuwih kolot",
+   "Memuat versi yang lebih lama…": "Keur ngamuat vérsi nu leuwih kolot…",
+   "Menampilkan {tampil} dari {total} versi": "Némbongkeun {tampil} tina {total} vérsi",
+   "Coba lagi": "Cobaan deui"
   },
   "atribut": {
    "Mode gelap": "Mode poék",
@@ -1478,7 +1554,7 @@
   const TEKS_ASLI = new Map();          // simpul teks -> teks Indonesia
   const ATR_ASLI  = new WeakMap();      // unsur -> { placeholder/title/aria-label: nilai Indonesia }
   const DIURUS_JS = ["cmList", "cmStat", "cmMsg", "cmStatusText", "cmOwnerLink",
-                     "cmCount", "cmCountN", "cmRepTo", "cmModalNama", "btnTema"];
+                     "cmCount", "cmCountN", "cmRepTo", "cmModalNama", "btnTema", "rlList"];
 
   function punyaJS(el) {
     for (let e = el; e && e !== document.body; e = e.parentElement) {
@@ -1550,6 +1626,8 @@
     if (b) b.setAttribute("aria-label", t("Tutup"));
     const j = document.getElementById("dnJudul");
     if (j) j.textContent = t("Menyiapkan unduhan");
+    const m = document.getElementById("rlMuatTeks");
+    if (m) m.textContent = t("Memuat daftar versi…");
   }
 
   function perbaruiTeksHalaman() {
@@ -1585,6 +1663,7 @@
     if (simpan) { try { localStorage.setItem("azurepet-bahasa", BAHASA); } catch (e) {} }
     perbaruiTeksHalaman();
     if (typeof perbaruiTeksOs === "function") perbaruiTeksOs();
+    if (typeof gambarVersiTerdahulu === "function") gambarVersiTerdahulu();
     if (window.AzurePetKomentar) window.AzurePetKomentar.bahasa();
   }
 
@@ -1633,6 +1712,7 @@
   document.getElementById("ghLink").href = REPO_URL;
   document.getElementById("ghLink2").href = REPO_URL;
   document.getElementById("allRel").href = RELEASES_URL;
+  document.getElementById("allRel2").href = RELEASES_URL;
   document.getElementById("relLink2").href = RELEASES_URL;
   /* judul & deskripsi diurus perbaruiTeksHalaman() */
 
@@ -1704,7 +1784,267 @@
       });
     });
   });
-  if (os === "win" || os === "linux") document.querySelector('.tab[data-tab="' + os + '"]').click();
+
+  /* ============================================================
+     VERSI & INSTALLER TERDAHULU — diambil dari GitHub Releases API.
+
+     Bekerja otomatis untuk repo mana pun (memakai GH_USER/GH_REPO yang
+     sudah dideteksi di atas), jadi TIDAK ADA YANG PERLU DIEDIT di sini.
+     TIDAK ADA BATAS JUMLAH: semua rilis dibaca halaman demi halaman
+     (per_page=100), lalu ditampilkan bertahap 10-10 lewat tombol
+     "Tampilkan versi yang lebih lama". Batas API tanpa login adalah
+     60 permintaan/jam per IP — tiap halaman rilis hanya memakai
+     1 permintaan, jadi puluhan versi pun aman.
+     ============================================================ */
+  const RL_SEKALI = 10;       // kartu yang ditampilkan per tahap
+  const RL_PER_HALAMAN = 100; // rilis yang dibaca per permintaan API
+  let rlData = null;        // hasil API, disimpan supaya ganti bahasa tidak memuat ulang
+  let rlTampil = 0;         // berapa kartu yang sedang ditampilkan
+  let rlAdaLagi = false;    // masih ada halaman API berikutnya?
+  let rlHalaman = 1;        // halaman API terakhir yang sudah dibaca
+  let rlMemuat = false;     // sedang memuat halaman berikutnya?
+  let rlGagal = false;
+
+  function rlUkuran(b) {
+    if (!b || b < 1024) return "";
+    if (b < 1048576) return Math.round(b / 1024) + " KB";
+    if (b < 1073741824) return (b / 1048576).toFixed(b < 10485760 ? 1 : 0) + " MB";
+    return (b / 1073741824).toFixed(1) + " GB";
+  }
+
+  function rlTanggal(iso) {
+    try {
+      const wilayah = BAHASA === "en" ? "en-GB" : BAHASA === "su" ? "su-ID-u-nu-latn" : "id-ID";
+      return new Date(iso).toLocaleDateString(wilayah, { day: "numeric", month: "long", year: "numeric" });
+    } catch (e) {
+      return String(iso || "").slice(0, 10);
+    }
+  }
+
+  function rlLabelBerkas(nama) {
+    /* nama file installer diubah menjadi label yang mudah dibaca;
+       file yang tidak dikenal ditampilkan apa adanya */
+    const n = String(nama || "");
+    if (/arm64\.dmg$/i.test(n))       return "macOS · Apple Silicon";
+    if (/x64\.dmg$/i.test(n))         return "macOS · Intel";
+    if (/Windows-x86-Setup\.exe$/i.test(n))   return "Windows · 32-bit (x86)";
+    if (/Windows-x64-Setup\.exe$/i.test(n))   return "Windows · 64-bit (x64)";
+    if (/Windows-arm64-Setup\.exe$/i.test(n)) return "Windows · ARM64";
+    if (/Arch.*\.pkg\.tar\.zst$/i.test(n))    return "Arch · paket resmi (.pkg.tar.zst)";
+    if (/Linux-arm64\.deb$/i.test(n)) return "Linux · ARM64 (.deb)";
+    if (/Linux-x64\.deb$/i.test(n))   return "Linux · x64 (.deb)";
+    if (/\.AppImage$/i.test(n))       return "Linux · AppImage (universal)";
+    return n;
+  }
+
+  /* satu kartu untuk satu rilis; dipakai ulang saat tombol "lagi" ditekan */
+  function rlKartu(r, terbaru) {
+    const kartu = document.createElement("article");
+    kartu.className = "rl-kartu" + (terbaru ? " terbaru" : "");
+
+    const kepala = document.createElement("div");
+    kepala.className = "rl-kepala";
+
+    const nama = document.createElement("span");
+    nama.className = "rl-nama";
+    nama.textContent = r.name || r.tag_name;
+    kepala.appendChild(nama);
+
+    if (terbaru) {
+      const l = document.createElement("span");
+      l.className = "rl-lencana";
+      l.textContent = t("Terbaru");
+      kepala.appendChild(l);
+    }
+
+    const tgl = document.createElement("span");
+    tgl.className = "rl-tgl";
+    tgl.textContent = "· " + rlTanggal(r.published_at || r.created_at);
+    kepala.appendChild(tgl);
+    kartu.appendChild(kepala);
+
+    /* catatan versi: hanya 2 paragraf pertama supaya kartunya ringkas;
+       selengkapnya lewat tautan ke halaman rilis itu */
+    if (r.body) {
+      const p = document.createElement("p");
+      p.className = "rl-catatan";
+      const pendek = String(r.body).split(/\n\s*\n/).slice(0, 2).join("\n\n").slice(0, 600);
+      p.textContent = pendek + (String(r.body).length > pendek.length ? "…" : "");
+      kartu.appendChild(p);
+    }
+
+    const tautanRilis = document.createElement("a");
+    tautanRilis.href = r.html_url;
+    tautanRilis.target = "_blank";
+    tautanRilis.rel = "noopener";
+    tautanRilis.style.fontSize = "13.5px";
+    tautanRilis.textContent = t("Lihat catatan versi") + " →";
+    kartu.appendChild(tautanRilis);
+
+    if (r.assets && r.assets.length) {
+      const unduh = document.createElement("div");
+      unduh.className = "rl-unduh";
+      r.assets.forEach((a) => {
+        if (/\.zip$/i.test(a.name) && /source|src|code|sumber|kode/i.test(a.name)) return;  // lewati arsip kode sumber
+        const tombol = document.createElement("a");
+        tombol.className = "btn btn-ghost rl-file";
+        tombol.href = REPO_URL + "/releases/download/" + r.tag_name + "/" + a.name;
+        tombol.target = "_blank";
+        tombol.rel = "noopener";
+        const label = document.createElement("span");
+        label.textContent = rlLabelBerkas(a.name);
+        tombol.appendChild(label);
+        const uk = rlUkuran(a.size);
+        if (uk) {
+          const u = document.createElement("span");
+          u.className = "rl-ukuran";
+          u.textContent = uk;
+          tombol.appendChild(u);
+        }
+        tombol.addEventListener("click", () => tampilkanNotif(a.name));
+        unduh.appendChild(tombol);
+      });
+      if (unduh.children.length) kartu.appendChild(unduh);
+    }
+
+    return kartu;
+  }
+
+  /* menggambar ulang seluruh daftar sesuai bahasa aktif & jumlah tahap.
+     Dipanggil saat: data tiba, tombol "lagi" ditekan, bahasa diganti. */
+  function gambarVersiTerdahulu() {
+    const wadah = document.getElementById("rlList");
+    if (!wadah) return;
+    wadah.innerHTML = "";
+
+    if (rlGagal && !rlData) {
+      const d = document.createElement("div");
+      d.className = "rl-muat";
+      d.textContent = t("Daftar versi tidak bisa dimuat. Coba lagi nanti, atau buka halaman rilis di GitHub.");
+      wadah.appendChild(d);
+      return;
+    }
+    if (!rlData) {
+      const d = document.createElement("div");
+      d.className = "rl-muat";
+      d.innerHTML = '<span></span><span class="dn-bar"><i></i></span>';
+      d.querySelector("span").textContent = t("Memuat daftar versi…");
+      wadah.appendChild(d);
+      return;
+    }
+    if (!rlData.length && !rlAdaLagi) {
+      const d = document.createElement("div");
+      d.className = "rl-kosong";
+      d.textContent = t("Belum ada versi terdahulu.");
+      wadah.appendChild(d);
+      return;
+    }
+
+    rlData.slice(0, rlTampil).forEach((r, i) => wadah.appendChild(rlKartu(r, i === 0)));
+
+    /* penghitung + tombol tahap berikutnya (hanya kalau masih ada sisa) */
+    const sisaLokal = rlData.length - rlTampil;
+    if (sisaLokal > 0 || rlAdaLagi) {
+      const info = document.createElement("p");
+      info.className = "rl-info";
+      const total = rlAdaLagi ? rlData.length + "+" : String(rlData.length);
+      info.textContent = t("Menampilkan {tampil} dari {total} versi")
+        .replace("{tampil}", String(Math.min(rlTampil, rlData.length)))
+        .replace("{total}", total);
+      wadah.appendChild(info);
+
+      const baris = document.createElement("div");
+      baris.className = "rl-lagi";
+      const tombol = document.createElement("button");
+      tombol.type = "button";
+      tombol.className = "btn btn-ghost";
+      tombol.id = "rlTombolLagi";
+      const label = rlGagal ? t("Coba lagi") : rlMemuat
+        ? t("Memuat versi yang lebih lama…")
+        : t("Tampilkan versi yang lebih lama");
+      tombol.textContent = (rlMemuat || rlGagal) ? label : label + " ↓";
+      tombol.disabled = rlMemuat;
+      tombol.addEventListener("click", rlMuatLagi);
+      baris.appendChild(tombol);
+      wadah.appendChild(baris);
+    }
+  }
+
+  /* membaca satu halaman API; mengembalikan true kalau masih ada halaman berikut.
+     Header "Link" dibaca untuk tahu ada halaman next atau tidak. */
+  function rlBacaHalaman(hal) {
+    return fetch("https://api.github.com/repos/" + GH_USER + "/" + GH_REPO +
+                 "/releases?per_page=" + RL_PER_HALAMAN + "&page=" + hal)
+      .then((res) => {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const link = res.headers ? res.headers.get("Link") || "" : "";
+        return res.json().then((data) => ({ data: data, adaNext: /rel="next"/.test(link) }));
+      })
+      .then((hasil) => {
+        const baru = (Array.isArray(hasil.data) ? hasil.data : [])
+          .filter((r) => !r.draft && !r.prerelease);
+        rlData = (rlData || []).concat(baru);
+        rlHalaman = hal;
+        /* halaman penuh + ada "next" = kemungkinan masih ada rilis lagi */
+        rlAdaLagi = hasil.adaNext || (Array.isArray(hasil.data) && hasil.data.length >= RL_PER_HALAMAN);
+        rlGagal = false;
+        return true;
+      });
+  }
+
+  /* tombol "Tampilkan versi yang lebih lama": tampilkan 10 berikut dari data
+     yang sudah ada; kalau habis tapi API masih punya halaman, ambil dulu. */
+  function rlMuatLagi() {
+    if (rlMemuat) return;
+    if (rlTampil < (rlData || []).length) {
+      rlTampil += RL_SEKALI;
+      gambarVersiTerdahulu();
+      return;
+    }
+    if (!rlAdaLagi) return;
+    rlMemuat = true;
+    gambarVersiTerdahulu();
+    rlBacaHalaman(rlHalaman + 1)
+      .then(() => {
+        rlTampil += RL_SEKALI;
+        rlMemuat = false;
+        gambarVersiTerdahulu();
+      })
+      .catch(() => {
+        rlMemuat = false;
+        rlGagal = true;      // daftar lama tetap tampil; tombol berubah jadi "Coba lagi"
+        gambarVersiTerdahulu();
+      });
+  }
+
+  /* dimuat malas: API baru dipanggil saat bagian ini mendekati layar,
+     supaya kunjungan biasa tetap secepat sebelumnya */
+  (function muatVersiTerdahulu() {
+    const target = document.getElementById("versi");
+    if (!target) return;
+    let jalan = false;
+    function panggil() {
+      if (jalan) return;
+      jalan = true;
+      rlBacaHalaman(1)
+        .then(() => {
+          rlTampil = RL_SEKALI;
+          gambarVersiTerdahulu();
+        })
+        .catch(() => { rlGagal = true; gambarVersiTerdahulu(); });
+    }
+    if (typeof IntersectionObserver === "function") {
+      const pantau = new IntersectionObserver((masuk) => {
+        if (masuk.some((e) => e.isIntersecting)) { pantau.disconnect(); panggil(); }
+      }, { rootMargin: "400px" });
+      pantau.observe(target);
+    } else {
+      setTimeout(panggil, 1500);
+    }
+    /* kalau pengunjung langsung membuka #versi (mis. dari hasil pencarian),
+       jangan tunggu digulir */
+    if (location.hash === "#versi") panggil();
+  })();
 
   // ---- menu mobile ----
   const nav = document.getElementById("nav");
@@ -2468,5 +2808,5 @@
   })();
 
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5f335699d8e6cec',t:'MTc5NTQ2ODcyOQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5f335699d8e6cec',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5f335699d8e6cec',t:'MTc5NTQ2ODcyOQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5f335699d8e6cec',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a60479131afae416',t:'MTc5NTY0OTc1OQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a60479131afae416',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
